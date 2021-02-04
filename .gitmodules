@@ -1,0 +1,6 @@
+[submodule "lib/glfw3"]
+	path = lib/glfw3
+	url = https://github.com/glfw/glfw.git
+[submodule "lib/glew"]
+	path = lib/glew
+	url = https://github.com/omniavinco/glew-cmake
