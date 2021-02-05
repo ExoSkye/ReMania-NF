@@ -10,7 +10,7 @@ set(PLATFORM "ReMania-NF" CACHE STRING "Platform selection (affects output execu
 set(BUILD_SHARED_LIBS ON)
 add_subdirectory(lib/glew)
 add_subdirectory(lib/glfw3)
-add_subdirectory(lib/glm)
+#add_subdirectory(lib/glm)
 
 file(GLOB_RECURSE TMNF_FILES
         ${CMAKE_SOURCE_DIR}/src/main_app/*.c
@@ -19,6 +19,6 @@ file(GLOB_RECURSE TMNF_FILES
         ${CMAKE_SOURCE_DIR}/src/main_app/*.hpp)
 
 add_executable(ReMania ${TMNF_FILES})
-target_link_libraries(ReMania glfw libglew_shared glm_shared)
+target_link_libraries(ReMania glfw libglew_shared)
 set_target_properties(ReMania PROPERTIES OUTPUT_NAME ${PLATFORM})
 target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm)

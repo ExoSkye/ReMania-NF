@@ -22,7 +22,7 @@ void logger::log(type logType, const char *logMsg, const char* area, const char 
             printf("[ERROR: %s] %s at %s:%i",area,logMsg,file,line);
             break;
         case FATAL:
-            printf("[FATAL ERROR: %s] %s at %s:%i",area,file,line);
+            printf("[FATAL ERROR: %s] %s at %s:%i",area,logMsg,file,line);
             exit(1);
             break;
     }
