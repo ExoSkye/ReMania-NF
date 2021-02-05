@@ -59,8 +59,8 @@ jobs:
 
       - name: Setup OpenGL
         if: matrix.config.name == 'Ubuntu-GCC' || matrix.config.name == 'Ubuntu-Clang'
-        uses: openrndr/setup-opengl@v1.1
-        
+        run: apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev
+
 
       - name: Configure CMake
         # Use a bash shell so we can use the same syntax for environment variable
