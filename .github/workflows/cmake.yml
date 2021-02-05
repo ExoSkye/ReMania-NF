@@ -57,6 +57,11 @@ jobs:
         # We'll use this as our working directory for all subsequent commands
         run: cmake -E make_directory ${{runner.workspace}}/build
 
+      - name: Setup OpenGL
+          if: ${{ ${{matrix.config.os}} == "ubuntu-latest" }}
+          uses: openrndr/setup-opengl@v1.1
+        
+
       - name: Configure CMake
         # Use a bash shell so we can use the same syntax for environment variable
         # access regardless of the host operating system
