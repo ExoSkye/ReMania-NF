@@ -58,7 +58,7 @@ jobs:
         run: cmake -E make_directory ${{runner.workspace}}/build
 
       - name: Setup OpenGL
-        if: matrix.config.os == ubuntu-latest
+        if: matrix.config.name == "Ubuntu-GCC" || matrix.config.name == "Ubuntu-Clang
         uses: openrndr/setup-opengl@v1.1
         
 
