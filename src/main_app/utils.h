@@ -5,10 +5,8 @@
 #ifndef TMNF_REMAKE_UTILS_H
 #define TMNF_REMAKE_UTILS_H
 
-#include <cstdio>
-
 namespace log {
-    bool verbose = false;
+    inline bool verbose = false;
 
     enum type {
         VERBOSE,
@@ -18,7 +16,8 @@ namespace log {
         FATAL
     };
 
-    void log(type logType, char* logMsg, char* file="\0", int line=0);
+    void log(type logType, const char* logMsg, const char* area);
+    void log(type logType, const char* logMsg, const char* area, const char* file, int line);
 }
 
 #endif //TMNF_REMAKE_UTILS_H

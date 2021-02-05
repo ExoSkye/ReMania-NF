@@ -3,25 +3,31 @@
 //
 
 #include "utils.h"
+#include "pch.h"
 
-void log::log(type logType, char *logMsg, char *file = "\0", int line = 0) {
+void log::log(type logType, const char *logMsg, const char* area, const char *file="", int line=0) {
     switch (logType) {
         case VERBOSE:
             if (verbose) {
-                printf("[VERBOSE] %s",logMsg);
+                printf("[VERBOSE: %s] %s",area,logMsg);
             }
             break;
         case INFO:
-            printf("[INFO] %s",logMsg);
+            printf("[INFO: %s] %s",area,logMsg);
             break;
         case WARN:
-            printf("[WARN] %s",logMsg);
+            printf("[WARN: %s] %s",area,logMsg);
             break;
         case ERROR:
-            printf("[ERROR] %s at %s:%i",logMsg,file,line);
+            printf("[ERROR: %s] %s at %s:%i",area,logMsg,file,line);
             break;
         case FATAL:
-            printf("[FATAL ERROR] %s at %s:%i",logMsg,file,line);
+            printf("[FATAL ERROR: %s] %s at %s:%i",area,file,line);
+            exit(1);
             break;
     }
+}
+
+void log::log(type logType, const char* logMsg const char* area,) {
+    log(logType, logMsg, area, "", 0);
 }
