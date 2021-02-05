@@ -10,14 +10,14 @@ void glLayer::GL_ERROR(GLenum source, GLenum type, GLuint id, GLenum severity, G
         case GL_DEBUG_SEVERITY_HIGH:
             switch (type) {
                 case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-                    log::log(log::WARN,message,"OpenGL");
+                    logger::log(logger::WARN, message, "OpenGL");
                     break;
                 case GL_DEBUG_TYPE_ERROR:
                 case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-                    log::log(log::ERROR,message,"OpenGL",__FILE__,__LINE__);
+                    logger::log(logger::ERROR, message, "OpenGL", __FILE__, __LINE__);
                     break;
                 default:
-                    log::log(log::INFO,message,"OpenGL");
+                    logger::log(logger::INFO, message, "OpenGL");
                     break;
             }
             break;
@@ -26,13 +26,25 @@ void glLayer::GL_ERROR(GLenum source, GLenum type, GLuint id, GLenum severity, G
     }
 }
 
-glLayer::glLayer(resolution res, std::vector<const char*>* shaderSet) {
+glLayer::glLayer(resolution res, GLFWmonitor* target_monitor , std::vector<shader>* shaderSet, const char* name, int swapInterval) {
     if (!glfwInit()) {
-        log::log(log::FATAL,"glfwInit() returned non 0 value","Engine",__FILE__,__LINE__);
+        logger::log(logger::FATAL, "glfwInit() returned a value other than 0", "OpenGL", __FILE__, __LINE__);
     }
 
-}
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    GLFWwindow *window = glfwCreateWindow(res.x, res.y, name, NULL, NULL);
+    glfwMakeContextCurrent(window);
+    if(glewInit() != GLEW_OK) {
+        logger::log(logger::FATAL, "glewInit() returned a value other than GLEW_OK", "OpenGL", __FILE__, __LINE__);
+    }
+    glfwSwapInterval(swapInterval);
+#ifdef _DEBUG
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(glLayer::GL_ERROR, 0);  
+#endif
 
+}
 void glLayer::compileShader(shaderType sType, const char *code) {
 
 }

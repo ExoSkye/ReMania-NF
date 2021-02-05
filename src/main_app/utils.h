@@ -5,7 +5,7 @@
 #ifndef TMNF_REMAKE_UTILS_H
 #define TMNF_REMAKE_UTILS_H
 
-namespace log {
+namespace logger {
     inline bool verbose = false;
 
     enum type {

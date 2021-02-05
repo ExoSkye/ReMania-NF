@@ -4,6 +4,6 @@
 
 #include "engine.h"
 
-void engine::engine(std::vector<std::string>* ShaderSet) {
+engine::engine(std::vector<std::string>* ShaderSet) {
 
 }

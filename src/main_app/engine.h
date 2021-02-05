@@ -18,6 +18,6 @@ class engine {
     std::vector<std::function<void(double,glLayer*)>> onFrameStart;
     std::vector<std::function<void(double,glLayer*)>> onFrameEnd;
     engine(std::vector<std::string>* ShaderSet);
-}
+};
 
 #endif //REMANIA_ENGINE_H

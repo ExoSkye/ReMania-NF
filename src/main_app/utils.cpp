@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "pch.h"
 
-void log::log(type logType, const char *logMsg, const char* area, const char *file="", int line=0) {
+void logger::log(type logType, const char *logMsg, const char* area, const char *file="", int line=0) {
     switch (logType) {
         case VERBOSE:
             if (verbose) {
@@ -28,6 +28,6 @@ void log::log(type logType, const char *logMsg, const char* area, const char *fi
     }
 }
 
-void log::log(type logType, const char* logMsg const char* area,) {
+void logger::log(type logType, const char* logMsg, const char* area) {
     log(logType, logMsg, area, "", 0);
 }
