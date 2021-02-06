@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(OpenGL 4.3 REQUIRED)
 
+option(TRACY "Enables the Tracy profiler support" OFF)
+
 set(PLATFORM "ReMania-NF" CACHE STRING "Platform selection (affects output executable name, used for CI artifacts)")
 
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Build the shared glfw library")
@@ -15,25 +17,29 @@ add_subdirectory(lib/glew)
 add_subdirectory(lib/glfw3)
 #add_subdirectory(lib/glm)
 
-file(GLOB_RECURSE TMNF_FILES
+file(GLOB_RECURSE RMNF_FILES
         ${CMAKE_SOURCE_DIR}/src/main_app/*.c
         ${CMAKE_SOURCE_DIR}/src/main_app/*.cpp
         ${CMAKE_SOURCE_DIR}/src/main_app/*.h
         ${CMAKE_SOURCE_DIR}/src/main_app/*.hpp)
 
-add_executable(ReMania ${TMNF_FILES})
+add_executable(ReMania ${RMNF_FILES} tracy/TracyClient.cpp)
 target_link_libraries(ReMania glfw libglew_shared)
 set_target_properties(ReMania PROPERTIES OUTPUT_NAME ${PLATFORM})
-target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm)
+target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy)
+if (TRACY MATCHES ON)
+    target_compile_definitions(ReMania PUBLIC TRACY_ENABLE)
+endif()
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
         ${CMAKE_BINARY_DIR}/out/)
 if(WIN32)
     include(installWin32.cmake)
 elseif(UNIX)
+    target_link_libraries(ReMania dl pthread)
     if(APPLE)
-    include(installApple.cmake)
+        include(installApple.cmake)
     ELSE()
-    include(installLinux.cmake)
+        include(installLinux.cmake)
     ENDIF()
 ENDIF()

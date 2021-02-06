@@ -22,22 +22,23 @@ struct shader {
     const char* sSource;
 };
 
-typedef void (APIENTRY *DEBUGPROC)(GLenum source,
-                                   GLenum type,
-                                   GLuint id,
-                                   GLenum severity,
-                                   GLsizei length,
-                                   const GLchar *message,
-                                   const void *userParam);
-
 typedef glm::vec<2,int,glm::defaultp> resolution;
 
+struct glInstruction {
+
+};
+
 class glLayer {
+    std::mutex instruction_mutex;
+    std::queue<glInstruction> instructions;
+    GLFWwindow *window;
 public:
     std::unordered_map<std::string,GLuint> programs;
     glLayer() = delete;
     glLayer(resolution res, GLFWmonitor *target_monitor, std::vector<shader> *shaderSet, std::vector<const char*>* programNames, const char *name,
             int swapInterval);
+
+    ~glLayer();
 
     GLuint compileShader(shaderType sType, const char* code);
     GLuint linkProgram(GLuint Shader1, GLuint Shader2);
@@ -48,6 +49,10 @@ public:
                          GLsizei length,
                          const GLchar *message,
                          const void *userParam);
+
+    void addInstruction(glInstruction inst);
+    bool update();
+
 };
 
 #endif //REMANIA_GLLAYER_H

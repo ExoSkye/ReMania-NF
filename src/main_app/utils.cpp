@@ -31,3 +31,14 @@ void logger::log(type logType, const char *logMsg, const char* area, const char 
 void logger::log(type logType, const char* logMsg, const char* area) {
     log(logType, logMsg, area, "", 0);
 }
+
+void* operator new(std::size_t count) {
+    auto ptr = malloc(count);
+    TracyAlloc(ptr, count);
+    return ptr;
+}
+
+void operator delete(void* ptr) noexcept {
+    TracyFree(ptr);
+    free(ptr);
+}

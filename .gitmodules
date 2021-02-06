@@ -7,3 +7,6 @@
 [submodule "lib/glm"]
 	path = lib/glm
 	url = https://github.com/g-truc/glm
+[submodule "tracy"]
+	path = tracy
+	url = https://github.com/wolfpld/tracy.git
