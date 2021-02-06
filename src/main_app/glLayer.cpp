@@ -26,7 +26,7 @@ void glLayer::GL_ERROR(GLenum source, GLenum type, GLuint id, GLenum severity, G
     }
 }
 
-glLayer::glLayer(resolution res, GLFWmonitor* target_monitor , std::vector<shader>* shaderSet, const char* name, int swapInterval) {
+glLayer::glLayer(resolution res, GLFWmonitor* target_monitor , std::vector<shader>* shaderSet, std::vector<const char*>* programNames, const char* name, int swapInterval) {
     if (!glfwInit()) {
         logger::log(logger::FATAL, "glfwInit() returned a value other than 0", "OpenGL", __FILE__, __LINE__);
     }
@@ -44,7 +44,26 @@ glLayer::glLayer(resolution res, GLFWmonitor* target_monitor , std::vector<shade
     glDebugMessageCallback(glLayer::GL_ERROR, 0);  
 #endif
 
-}
-void glLayer::compileShader(shaderType sType, const char *code) {
+    assert(shaderSet->size()/2 == programNames->size());
 
+    for (int i = 0; i < shaderSet->size(); i+=2) {
+        GLuint shader1 = compileShader(shaderSet->at(i).sType,shaderSet->at(i).sSource);
+        GLuint shader2 = compileShader(shaderSet->at(i+1).sType,shaderSet->at(i+1).sSource);
+        GLuint program = linkProgram(shader1,shader2);
+        programs[std::string(programNames->at(i/2))] = program;
+    }
+}
+GLuint glLayer::compileShader(shaderType sType, const char *code) {
+    GLuint shader = glCreateShader(sType == fragment ? GL_FRAGMENT_SHADER : GL_VERTEX_SHADER);
+    glShaderSource(shader,1,&code,NULL);
+    glCompileShader(shader);
+    return shader;
+}
+
+GLuint glLayer::linkProgram(GLuint Shader1, GLuint Shader2) {
+    GLuint program = glCreateProgram();
+    glAttachShader(program,Shader1);
+    glAttachShader(program,Shader2);
+    glLinkProgram(program);
+    return program;
 }

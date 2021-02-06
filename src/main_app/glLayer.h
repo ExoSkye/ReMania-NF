@@ -34,11 +34,13 @@ typedef glm::vec<2,int,glm::defaultp> resolution;
 
 class glLayer {
 public:
+    std::unordered_map<std::string,GLuint> programs;
     glLayer() = delete;
-    glLayer(resolution res, GLFWmonitor *target_monitor, std::vector<shader> *shaderSet, const char *name,
+    glLayer(resolution res, GLFWmonitor *target_monitor, std::vector<shader> *shaderSet, std::vector<const char*>* programNames, const char *name,
             int swapInterval);
 
-    void compileShader(shaderType sType, const char* code);
+    GLuint compileShader(shaderType sType, const char* code);
+    GLuint linkProgram(GLuint Shader1, GLuint Shader2);
     static void GL_ERROR(GLenum source,
                          GLenum type,
                          GLuint id,
