@@ -30,17 +30,17 @@ jobs:
             build_type: "Release", cc: "gcc", cxx: "g++"
           }
           - {
-            name: "Ubuntu-GCC", artifact: "LinuxGCC.tar.xz",
+            name: "Ubuntu-GCC", artifact: "Linux-GCC.tar.xz",
             os: ubuntu-latest,
             build_type: "Release", cc: "gcc", cxx: "g++"
           }
           - {
-            name: "Ubuntu-Clang", artifact: "Clang.tar.xz",
+            name: "Ubuntu-Clang", artifact: "Linux-Clang.tar.xz",
             os: ubuntu-latest,
             build_type: "Release", cc: "clang", cxx: "clang++"
           }
           - {
-            name: "macOS-Clang", artifact: "macOS.tar.xz",
+            name: "macOS-Clang", artifact: "macOS-Clang.tar.xz",
             os: macos-latest,
             build_type: "Release", cc: "clang", cxx: "clang++"
           }
