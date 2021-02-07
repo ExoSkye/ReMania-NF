@@ -46,10 +46,9 @@ glLayer::glLayer(resolution res, GLFWmonitor* target_monitor , std::vector<shade
     }
     TracyCZoneEnd(glewInitZone);
     glfwSwapInterval(swapInterval);
-#ifdef _DEBUG
+
     glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(glLayer::GL_ERROR, 0);  
-#endif
+    glDebugMessageCallback(glLayer::GL_ERROR, 0);
     TracyCZoneNC(shaderComp,"Compile Shaders",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
     assert(shaderSet->size()/2 == programNames->size());
 
@@ -57,23 +56,31 @@ glLayer::glLayer(resolution res, GLFWmonitor* target_monitor , std::vector<shade
         GLuint shader1 = compileShader(shaderSet->at(i).sType,shaderSet->at(i).sSource);
         GLuint shader2 = compileShader(shaderSet->at(i+1).sType,shaderSet->at(i+1).sSource);
         GLuint program = linkProgram(shader1,shader2);
+
         programs[std::string(programNames->at(i/2))] = program;
+
+
     }
     TracyCZoneEnd(shaderComp)
+    TracyCZoneEnd(glLayerInit);
 }
 
 GLuint glLayer::compileShader(shaderType sType, const char *code) {
+    TracyCZoneNC(shaderComp,"Compile a shader",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
     GLuint shader = glCreateShader(sType == fragment ? GL_FRAGMENT_SHADER : GL_VERTEX_SHADER);
     glShaderSource(shader,1,&code,NULL);
     glCompileShader(shader);
+    TracyCZoneEnd(shaderComp)
     return shader;
 }
 
 GLuint glLayer::linkProgram(GLuint Shader1, GLuint Shader2) {
+    TracyCZoneNC(shaderLink,"Link 2 shaders",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
     GLuint program = glCreateProgram();
     glAttachShader(program,Shader1);
     glAttachShader(program,Shader2);
     glLinkProgram(program);
+    TracyCZoneEnd(shaderLink)
     return program;
 }
 
@@ -87,10 +94,41 @@ void glLayer::addInstruction(glInstruction inst) {
 
 bool glLayer::update() {
     TracyCZoneNC(update,"Update screen",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering);
+    TracyCZoneNC(cameraMatrix,"Work out camera projection matrix",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
+    vMat = glm::translate(glm::mat4(1.0f),cameraLocation);
+    glfwGetFramebufferSize(window, &width, &height);
+    aspect = (float)width / (float)height;
+    pMat = glm::perspective(1.0427f, aspect,0.1f,1000.0f);
+    TracyCZoneEnd(cameraMatrix);
+    shaderMap.clear();
     while (instructions.size() > 0) {
         instruction_mutex.lock();
-        // TODO: Write instruction running code
+        glInstruction inst = instructions.front();
+        shaderMap[inst.shaderName].emplace_back(inst);
+        instructions.pop();
         instruction_mutex.unlock();
+    }
+    for(const auto& pair : shaderMap) {
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glUseProgram(programs[pair.first]);
+        glGetUniformLocation(programs[pair.first],"mv_matrix");
+        glGetUniformLocation(programs[pair.first],"proj_matrix");
+        for (auto inst : pair.second) {
+            TracyCZoneNC(modelMatrix,"Work out model matrix",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
+            mMat = glm::translate(glm::mat4(1.0f),inst.position);
+            mvMat = vMat*mMat;
+            TracyCZoneEnd(modelMatrix)
+            TracyCZoneNC(openglrender,"Run shader and render",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
+            glUniformMatrix4fv(mvLoc,1,GL_FALSE,glm::value_ptr(mvMat));
+            glUniformMatrix4fv(projLoc,1,GL_FALSE,glm::value_ptr(pMat));
+            glBindBuffer(GL_ARRAY_BUFFER,inst.vbo);
+            glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0,0);
+            glEnableVertexAttribArray(0);
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LEQUAL);
+            glDrawArrays(inst.type,inst.start,inst.len);
+            TracyCZoneEnd(openglrender);
+        }
     }
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -101,4 +139,20 @@ bool glLayer::update() {
 glLayer::~glLayer() {
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+GLuint glLayer::genVBO() {
+    TracyCZoneNC(genVBOzone,"Generate VBO",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering);
+    GLuint vbo;
+    glBindVertexArray(vao);
+    glGenBuffers(1,&vbo);
+    TracyCZoneEnd(genVBOzone);
+    return vbo;
+}
+
+void glLayer::setVBO(GLuint vbo, int len, void *data) {
+    TracyCZoneNC(setVBOzone,"Set VBO with data",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering);
+    glBindBuffer(GL_ARRAY_BUFFER,vbo);
+    glBufferData(GL_ARRAY_BUFFER,len,data,GL_STATIC_DRAW);
+    TracyCZoneEnd(setVBOzone);
 }

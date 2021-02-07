@@ -25,15 +25,27 @@ struct shader {
 typedef glm::vec<2,int,glm::defaultp> resolution;
 
 struct glInstruction {
-
+    const char* shaderName;
+    GLuint vbo;
+    int start, len;
+    GLenum type;
+    glm::vec3 position;
 };
+
 
 class glLayer {
     std::mutex instruction_mutex;
     std::queue<glInstruction> instructions;
     GLFWwindow *window;
-public:
+    std::unordered_map<const char*,std::vector<glInstruction>> shaderMap;
     std::unordered_map<std::string,GLuint> programs;
+    GLuint vao;
+    GLuint mvLoc, projLoc;
+    float aspect;
+    int width, height;
+    glm::mat4 pMat, vMat, mMat, mvMat;
+public:
+    glm::vec3 cameraLocation;
     glLayer() = delete;
     glLayer(resolution res, GLFWmonitor *target_monitor, std::vector<shader> *shaderSet, std::vector<const char*>* programNames, const char *name,
             int swapInterval);
@@ -52,7 +64,8 @@ public:
 
     void addInstruction(glInstruction inst);
     bool update();
-
+    GLuint genVBO();
+    static void setVBO(GLuint vbo, int len, void* data);
 };
 
 #endif //REMANIA_GLLAYER_H

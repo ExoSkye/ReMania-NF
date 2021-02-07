@@ -9,20 +9,20 @@ void logger::log(type logType, const char *logMsg, const char* area, const char 
     switch (logType) {
         case VERBOSE:
             if (verbose) {
-                printf("[VERBOSE: %s] %s",area,logMsg);
+                printf("[VERBOSE: %s] %s\n",area,logMsg);
             }
             break;
         case INFO:
-            printf("[INFO: %s] %s",area,logMsg);
+            printf("[INFO: %s] %s\n",area,logMsg);
             break;
         case WARN:
-            printf("[WARN: %s] %s",area,logMsg);
+            printf("[WARN: %s] %s\n",area,logMsg);
             break;
         case ERROR:
-            printf("[ERROR: %s] %s at %s:%i",area,logMsg,file,line);
+            printf("[ERROR: %s] %s at %s:%i\n",area,logMsg,file,line);
             break;
         case FATAL:
-            printf("[FATAL ERROR: %s] %s at %s:%i",area,logMsg,file,line);
+            printf("[FATAL ERROR: %s] %s at %s:%i\n",area,logMsg,file,line);
             exit(1);
             break;
     }
