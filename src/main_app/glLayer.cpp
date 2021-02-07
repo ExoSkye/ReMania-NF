@@ -49,6 +49,7 @@ glLayer::glLayer(resolution res, GLFWmonitor* target_monitor , std::vector<shade
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(glLayer::GL_ERROR, 0);
+    glGenVertexArrays(1, &vao);
     TracyCZoneNC(shaderComp,"Compile Shaders",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
     assert(shaderSet->size()/2 == programNames->size());
 
@@ -95,11 +96,12 @@ void glLayer::addInstruction(glInstruction inst) {
 bool glLayer::update() {
     TracyCZoneNC(update,"Update screen",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering);
     TracyCZoneNC(cameraMatrix,"Work out camera projection matrix",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
-    vMat = glm::translate(glm::mat4(1.0f),cameraLocation);
+    vMat = glm::translate(glm::mat4(1.0f),-cameraLocation);
     glfwGetFramebufferSize(window, &width, &height);
     aspect = (float)width / (float)height;
     pMat = glm::perspective(1.0427f, aspect,0.1f,1000.0f);
     TracyCZoneEnd(cameraMatrix);
+    TracyCZoneNC(sortShaders,"Sort instructions by used shader",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
     shaderMap.clear();
     while (instructions.size() > 0) {
         instruction_mutex.lock();
@@ -108,11 +110,13 @@ bool glLayer::update() {
         instructions.pop();
         instruction_mutex.unlock();
     }
+    TracyCZoneEnd(sortShaders);
     for(const auto& pair : shaderMap) {
         glClear(GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(programs[pair.first]);
-        glGetUniformLocation(programs[pair.first],"mv_matrix");
-        glGetUniformLocation(programs[pair.first],"proj_matrix");
+        mvLoc = glGetUniformLocation(programs[pair.first],"mv_matrix");
+        projLoc = glGetUniformLocation(programs[pair.first],"proj_matrix");
         for (auto inst : pair.second) {
             TracyCZoneNC(modelMatrix,"Work out model matrix",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
             mMat = glm::translate(glm::mat4(1.0f),inst.position);
@@ -130,9 +134,12 @@ bool glLayer::update() {
             TracyCZoneEnd(openglrender);
         }
     }
+    TracyCZoneNC(glfwSwapandPoll,"GLFW Swap buffers and poll events",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
     glfwSwapBuffers(window);
     glfwPollEvents();
+    TracyCZoneEnd(glfwSwapandPoll);
     TracyCZoneEnd(update);
+    FrameMark;
     return glfwWindowShouldClose(window);
 }
 

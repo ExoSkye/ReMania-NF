@@ -10,10 +10,10 @@ int main() {
                           "uniform mat4 mv_matrix;\n"
                           "uniform mat4 proj_matrix;\n"
                           "\n"
-                          "void main()\n"
+                          "void main(void)\n"
                           "{\n"
-                          "        gl_Position = proj_matrix*mv_matrix*vec4(position,1.0);\n"
-                          "}";
+                          "\tgl_Position = proj_matrix * mv_matrix * vec4(position,1.0);\n"
+                          "} ";
     const char* fSource = "#version 430\n"
                           "\n"
                           "out vec4 color;\n"
@@ -21,8 +21,8 @@ int main() {
                           "uniform mat4 mv_matrix;\n"
                           "uniform mat4 proj_matrix;\n"
                           "\n"
-                          "void main() {\n"
-                          "        color = vec4(1.0,0.0,0.0,1.0);\n"
+                          "void main(void)\n"
+                          "{\tcolor = vec4(1.0,0.0,0.0, 1.0);\n"
                           "}";
     std::vector<shader> shaderSet = {shader{vertex,vSource},shader{fragment,fSource}};
     std::vector<const char*> names = {"Shader 1"};
@@ -43,15 +43,20 @@ int main() {
             1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f, -1.0f
     };
     layer.setVBO(vbo,sizeof(vertexPositions),vertexPositions);
+    layer.cameraLocation = glm::vec3(0.0f,0.0f,8.0f);
+    double i = 0.01;
     while (true) {
         layer.addInstruction(glInstruction{
                 "Shader 1",
                 vbo,
                 0, 36,
                 GL_TRIANGLES,
-                glm::vec3(0.0f, -2.0f, 0.0f)
+                glm::vec3(cos(i)*2, -(sin(i)*2), 0.0f)
         });
-        layer.update();
+        i+=0.001;
+        if (layer.update()) {
+            break;
+        }
     }
     return 0;
 }
