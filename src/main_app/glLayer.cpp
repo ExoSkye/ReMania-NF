@@ -48,6 +48,7 @@ glLayer::glLayer(resolution res, GLFWmonitor* target_monitor , std::vector<shade
     glfwSwapInterval(swapInterval);
 
     glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_CULL_FACE);
     glDebugMessageCallback(glLayer::GL_ERROR, 0);
     glGenVertexArrays(1, &vao);
     TracyCZoneNC(shaderComp,"Compile Shaders",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
@@ -97,9 +98,13 @@ bool glLayer::update() {
     TracyCZoneNC(update,"Update screen",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering);
     TracyCZoneNC(cameraMatrix,"Work out camera projection matrix",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
     vMat = glm::translate(glm::mat4(1.0f),-cameraLocation);
-    glfwGetFramebufferSize(window, &width, &height);
-    aspect = (float)width / (float)height;
-    pMat = glm::perspective(1.0427f, aspect,0.1f,1000.0f);
+    glfwGetFramebufferSize(window, &newWidth, &newHeight);
+    if (newWidth != width || newHeight != height) {
+        width = newWidth;
+        height = newHeight;
+        aspect = (float) width / (float) height;
+        pMat = glm::perspective(1.0427f, aspect, 0.1f, 1000.0f);
+    }
     TracyCZoneEnd(cameraMatrix);
     TracyCZoneNC(sortShaders,"Sort instructions by used shader",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
     shaderMap.clear();
@@ -162,4 +167,10 @@ void glLayer::setVBO(GLuint vbo, int len, void *data) {
     glBindBuffer(GL_ARRAY_BUFFER,vbo);
     glBufferData(GL_ARRAY_BUFFER,len,data,GL_STATIC_DRAW);
     TracyCZoneEnd(setVBOzone);
+}
+
+void glLayer::WINDOW_RESHAPE_CALLBACK(GLFWwindow * window, int newWidth, int newHeight) {
+    aspect = (float)newWidth / (float)newHeight;
+    glViewport(0,0,newWidth,newHeight);
+    pMat = glm::perspective(1.04f, aspect,0.1f,1000.0f);
 }

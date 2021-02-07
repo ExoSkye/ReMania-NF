@@ -42,7 +42,7 @@ class glLayer {
     GLuint vao;
     GLuint mvLoc, projLoc;
     float aspect;
-    int width, height;
+    int width, height, newWidth, newHeight;
     glm::mat4 pMat, vMat, mMat, mvMat;
 public:
     glm::vec3 cameraLocation;
@@ -61,6 +61,8 @@ public:
                          GLsizei length,
                          const GLchar *message,
                          const void *userParam);
+
+    void WINDOW_RESHAPE_CALLBACK(GLFWwindow*,int newWidth,int newHeight);
 
     void addInstruction(glInstruction inst);
     bool update();
