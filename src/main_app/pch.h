@@ -14,6 +14,7 @@
 #include <Tracy.hpp>
 #include <TracyC.h>
 #include <queue>
+#include <mutex>
 
 #define TRACY_OPENGL_COLOUR 0xff7f00
 #define TRACY_ENGINE_COLOUR 0xff0000
