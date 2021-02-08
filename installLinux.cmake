@@ -10,7 +10,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
 else()
     add_custom_command(TARGET ReMania POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_BINARY_DIR}/lib/glew/lib/libglew.so"
+            "${CMAKE_BINARY_DIR}/lib/glew/lib/libglew.so.2.2.0"
             ${CMAKE_BINARY_DIR}/out/)
 endif()
 add_custom_command(TARGET ReMania POST_BUILD
