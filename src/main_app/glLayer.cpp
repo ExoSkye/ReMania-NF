@@ -49,7 +49,7 @@ glLayer::glLayer(resolution res, GLFWmonitor* target_monitor , std::vector<shade
 
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_CULL_FACE);
-    glDebugMessageCallback(glLayer::GL_ERROR, 0);
+    glDebugMessageCallback((GLDEBUGPROC)glLayer::GL_ERROR, 0);
     glGenVertexArrays(1, &vao);
     TracyCZoneNC(shaderComp,"Compile Shaders",TRACY_OPENGL_COLOUR,SUBSYSTEMS & Sys_Rendering)
     assert(shaderSet->size()/2 == programNames->size());

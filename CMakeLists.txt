@@ -33,13 +33,12 @@ endif()
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
         ${CMAKE_BINARY_DIR}/out/)
-if(WIN32)
-    include(installWin32.cmake)
-elseif(UNIX)
-    target_link_libraries(ReMania dl pthread)
-    if(APPLE)
-        include(installApple.cmake)
-    ELSE()
-        include(installLinux.cmake)
-    ENDIF()
-ENDIF()
+add_custom_command(TARGET ReMania POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:ReMania> ${CMAKE_BINARY_DIR}/out/)
+add_custom_command(TARGET ReMania POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:glfw> ${CMAKE_BINARY_DIR}/out/)
+add_custom_command(TARGET ReMania POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:libglew_shared> ${CMAKE_BINARY_DIR}/out/)
