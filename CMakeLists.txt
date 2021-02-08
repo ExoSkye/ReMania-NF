@@ -26,7 +26,7 @@ file(GLOB_RECURSE RMNF_FILES
 add_executable(ReMania ${RMNF_FILES} tracy/TracyClient.cpp)
 target_link_libraries(ReMania glfw libglew_shared lzokay)
 set_target_properties(ReMania PROPERTIES OUTPUT_NAME ${PLATFORM})
-target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzokay lib/iAlgorithm)
+target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzokay)
 if (TRACY MATCHES ON)
     target_compile_definitions(ReMania PUBLIC TRACY_ENABLE)
 endif()
