@@ -4,13 +4,6 @@ project(ReMania)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(OpenGL 4.3 REQUIRED)
-find_package(OpenSSL 1.1.0)
-
-set(SYSTEM_OPENSSL ON CACHE STRING "Use system-provided openssl libraries (instead of prebuilts or building)")
-
-if(NOT OPENSSL_FOUND)
-    set(SYSTEM_OPENSSL OFF CACHE STRING "Use system-provided openssl libraries (instead of prebuilts or building)")
-endif()
 
 add_subdirectory(lib/openssl-cmake)
 
