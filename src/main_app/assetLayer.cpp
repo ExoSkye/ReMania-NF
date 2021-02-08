@@ -20,6 +20,6 @@ void assetLayer::printIndex(const char *file) {
     char* encryptionVer = (char*)alloca(sizeof(char)*2);
     encryptionVer[1] = '\0';
     fread(encryptionVer,sizeof(char),1,encryptionKeyFile);
-    logger::log(logger::INFO, ("The encryption key file version is: "+std::to_string((int)encryptionVer)).c_str(),"Assets");
+    logger::log(logger::INFO, ("The encryption key file version is: "+std::to_string((int)encryptionVer[0])).c_str(),"Assets");
 
 }
