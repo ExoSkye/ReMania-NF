@@ -16,14 +16,8 @@ set(ONLY_LIBS ON CACHE BOOL "Only build glew library")
 add_subdirectory(lib/glew)
 add_subdirectory(lib/glfw3)
 add_subdirectory(lib/lzokay)
-
-file(GLOB_RECURSE RMNF_FILES
-        ${CMAKE_SOURCE_DIR}/src/main_app/*.c
-        ${CMAKE_SOURCE_DIR}/src/main_app/*.cpp
-        ${CMAKE_SOURCE_DIR}/src/main_app/*.h
-        ${CMAKE_SOURCE_DIR}/src/main_app/*.hpp)
-
-add_executable(ReMania ${RMNF_FILES} tracy/TracyClient.cpp)
+set(PREFIX src/main_app)
+add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)
 target_link_libraries(ReMania glfw libglew_shared lzokay)
 set_target_properties(ReMania PROPERTIES OUTPUT_NAME ${PLATFORM})
 target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzokay)
