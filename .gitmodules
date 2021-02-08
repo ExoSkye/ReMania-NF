@@ -10,9 +10,6 @@
 [submodule "tracy"]
 	path = tracy
 	url = https://github.com/wolfpld/tracy.git
-[submodule "lib/iAlgorithm"]
-	path = lib/iAlgorithm
-	url = https://github.com/lsw29475/iAlgorithm.git
 [submodule "lib/lzokay"]
 	path = lib/lzokay
 	url = https://github.com/jackoalan/lzokay
