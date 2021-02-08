@@ -19,15 +19,10 @@ jobs:
       matrix:
         config:
           - {
-            name: "Windows-MSVC", artifact: "Windows-MSVC.tar.xz",
+            name: "Windows", artifact: "Windows.tar.xz",
             os: windows-latest,
             build_type: "Release", cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
-          }
-          - {
-            name: "Windows-MinGW", artifact: "Windows-MinGW.tar.xz",
-            os: windows-latest,
-            build_type: "Release", cc: "gcc", cxx: "g++"
           }
           - {
             name: "Ubuntu-GCC", artifact: "Linux-GCC.tar.xz",
@@ -37,11 +32,6 @@ jobs:
           - {
             name: "Ubuntu-Clang", artifact: "Linux-Clang.tar.xz",
             os: ubuntu-latest,
-            build_type: "Release", cc: "clang", cxx: "clang++"
-          }
-          - {
-            name: "macOS-Clang", artifact: "macOS-Clang.tar.xz",
-            os: macos-latest,
             build_type: "Release", cc: "clang", cxx: "clang++"
           }
 
@@ -87,15 +77,10 @@ jobs:
           path: |
             ${{runner.workspace}}/build/out/*
 
-      - name: Rename directory
-        working-directory: ${{runner.workspace}}
-        shell: bash
-        run: "cp -rv build ${{ github.sha }}"
-
       - name: Upload to IPFS
         # You may pin to the exact commit or the version.
         # uses: aquiladev/ipfs-action@cb917f89640f3d6191713b2419828276940fd4ec
         uses: aquiladev/ipfs-action@v0.1.5
         with:
           # Directory path to upload
-          path: "${{runner.workspace}}/${{ github.sha }}/out"
+          path: "${{runner.workspace}}/build/out"
