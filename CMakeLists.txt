@@ -4,7 +4,7 @@ project(ReMania)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(OpenGL 4.3 REQUIRED)
-
+find_package(OpenSSL 1.1.0 REQUIRED)
 option(TRACY "Enables the Tracy profiler support" OFF)
 
 set(PLATFORM "ReMania-NF" CACHE STRING "Platform selection (affects output executable name, used for CI artifacts)")
@@ -15,12 +15,12 @@ set(glew-cmake_BUILD_STATIC OFF CACHE BOOL "Build the static glew library")
 set(ONLY_LIBS ON CACHE BOOL "Only build glew library")
 add_subdirectory(lib/glew)
 add_subdirectory(lib/glfw3)
-add_subdirectory(lib/lzokay)
+
 set(PREFIX src/main_app)
 add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)
-target_link_libraries(ReMania glfw libglew_shared lzokay)
+target_link_libraries(ReMania glfw libglew_shared OpenSSL)
 set_target_properties(ReMania PROPERTIES OUTPUT_NAME ${PLATFORM})
-target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzokay)
+target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy)
 if (TRACY MATCHES ON)
     target_compile_definitions(ReMania PUBLIC TRACY_ENABLE)
 endif()
@@ -39,9 +39,6 @@ add_custom_command(TARGET ReMania POST_BUILD
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:libglew_shared> ${CMAKE_BINARY_DIR}/out/)
-add_custom_command(TARGET ReMania POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        $<TARGET_FILE:lzokay> ${CMAKE_BINARY_DIR}/out/)
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
         ${CMAKE_BINARY_DIR}/out/assets)

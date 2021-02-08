@@ -14,7 +14,6 @@
 #include <TracyC.h>
 #include <queue>
 #include <mutex>
-#include <lzokay.hpp>
 #include <string>
 
 #define TRACY_OPENGL_COLOUR 0xff7f00

@@ -10,6 +10,7 @@
 [submodule "tracy"]
 	path = tracy
 	url = https://github.com/wolfpld/tracy.git
-[submodule "lib/lzokay"]
-	path = lib/lzokay
-	url = https://github.com/jackoalan/lzokay
+
+[submodule "lib/lzo"]
+	path = lib/lzo
+	url = https://github.com/nemequ/lzo.git
