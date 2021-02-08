@@ -15,6 +15,9 @@
 #include <queue>
 #include <mutex>
 #include <string>
+#include <openssl/blowfish.h>
+#include <lzo/lzo1x.h>
+#include <openssl/md5.h>
 
 #define TRACY_OPENGL_COLOUR 0xff7f00
 #define TRACY_ENGINE_COLOUR 0xff0000
