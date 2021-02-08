@@ -4,7 +4,16 @@ project(ReMania)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(OpenGL 4.3 REQUIRED)
-find_package(OpenSSL 1.1.0 REQUIRED)
+find_package(OpenSSL 1.1.0)
+
+set(SYSTEM_OPENSSL ON CACHE STRING "Use system-provided openssl libraries (instead of prebuilts or building)")
+
+if(NOT OPENSSL_FOUND)
+    set(SYSTEM_OPENSSL OFF CACHE STRING "Use system-provided openssl libraries (instead of prebuilts or building)")
+endif()
+
+add_subdirectory(lib/openssl-cmake)
+
 option(TRACY "Enables the Tracy profiler support" OFF)
 
 set(PLATFORM "ReMania-NF" CACHE STRING "Platform selection (affects output executable name, used for CI artifacts)")
@@ -18,7 +27,7 @@ add_subdirectory(lib/glfw3)
 
 set(PREFIX src/main_app)
 add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)
-target_link_libraries(ReMania glfw libglew_shared OpenSSL)
+target_link_libraries(ReMania glfw libglew_shared crypto)
 set_target_properties(ReMania PROPERTIES OUTPUT_NAME ${PLATFORM})
 target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy)
 if (TRACY MATCHES ON)

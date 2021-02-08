@@ -14,3 +14,6 @@
 [submodule "lib/lzo"]
 	path = lib/lzo
 	url = https://github.com/nemequ/lzo.git
+[submodule "lib/openssl-cmake"]
+	path = lib/openssl-cmake
+	url = https://github.com/viaduck/openssl-cmake
