@@ -5,7 +5,6 @@
 #include <cstdio>
 #include <cassert>
 #include <vector>
-#include <fstream>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,6 +14,9 @@
 #include <TracyC.h>
 #include <queue>
 #include <mutex>
+#include <lzokay.hpp>
+#include <iBlowFish.h>
+#include <string>
 
 #define TRACY_OPENGL_COLOUR 0xff7f00
 #define TRACY_ENGINE_COLOUR 0xff0000
@@ -24,9 +26,10 @@
 enum SusSystems {
     Sys_Physics = 1 << 0,
     Sys_Rendering = 1 << 1,
-    Sys_GameLogic = 1 << 2
+    Sys_GameLogic = 1 << 2,
+    Sys_Engine = 1 << 3,
 };
 
-#define SUBSYSTEMS Sys_Physics | Sys_Rendering | Sys_GameLogic
+#define SUBSYSTEMS Sys_Physics | Sys_Rendering | Sys_GameLogic | Sys_Engine
 
 #endif
