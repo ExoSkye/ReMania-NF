@@ -46,6 +46,9 @@ add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:libglew_shared> ${CMAKE_BINARY_DIR}/out/)
 add_custom_command(TARGET ReMania POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:lzokay> ${CMAKE_BINARY_DIR}/out/)
+add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
         ${CMAKE_BINARY_DIR}/out/assets)
 add_custom_command(TARGET ReMania POST_BUILD
