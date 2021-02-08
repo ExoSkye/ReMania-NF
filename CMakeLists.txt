@@ -26,7 +26,7 @@ add_subdirectory(lib/lzo)
 set(PREFIX src/main_app)
 add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)
 target_link_libraries(ReMania glfw libglew_shared crypto)
-set_target_properties(ReMania PROPERTIES OUTPUT_NAME ${PLATFORM})
+
 target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include)
 if (TRACY MATCHES ON)
     target_compile_definitions(ReMania PUBLIC TRACY_ENABLE)
