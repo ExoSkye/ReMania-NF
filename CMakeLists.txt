@@ -34,6 +34,9 @@ endif()
 if (UNIX)
     target_link_libraries(ReMania pthread dl)
 endif()
+if(WIN32) 
+    target_link_libraries(ReMania crypt32) 
+endif() 
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
         ${CMAKE_BINARY_DIR}/out/)
