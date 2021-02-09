@@ -18,10 +18,6 @@
 	path = lib/lzo
 	url = https://github.com/nemequ/lzo.git
 
-[submodule "lib/cryptopp-cmake"]
-	path = lib/cryptopp-cmake
-	url = https://github.com/noloader/cryptopp-cmake
-
-[submodule "lib/cryptopp-cmake/cryptopp"]
- 	path = lib/cryptopp-cmake/cryptopp
-	url = https://github.com/weidai11/cryptopp
+[submodule "lib/mbedtls"]
+	path = lib/mbedtls
+	url = https://github.com/ARMmbed/mbedtls.git

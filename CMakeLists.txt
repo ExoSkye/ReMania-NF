@@ -6,8 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 # Find OpenGL
 find_package(OpenGL 4.3 REQUIRED)
 
-add_subdirectory(lib/cryptopp-cmake)
-
 # Options/Overrides for libraries (eg only building shared libraries)
 option(TRACY "Enables the Tracy profiler support" OFF)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Build the shared glfw library")
@@ -16,23 +14,29 @@ set(glew-cmake_BUILD_STATIC OFF CACHE BOOL "Build the static glew library")
 set(ONLY_LIBS ON CACHE BOOL "Only build glew library")
 set(ENABLE_STATIC OFF CACHE BOOL "Build static LZO library.")
 set(ENABLE_SHARED ON CACHE BOOL "Build shared LZO library.")
+set(ENABLE_PROGRAMS OFF CACHE BOOL "Build mbed TLS programs.")
+set(ENABLE_TESTING OFF CACHE BOOL "Build mbed TLS tests.")
 
 # Configure all the libs
 add_subdirectory(lib/glew)
 add_subdirectory(lib/glfw3)
 add_subdirectory(lib/lzo)
+add_subdirectory(lib/mbedtls)
 
 set(PREFIX src/main_app)
 add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)
-target_link_libraries(ReMania glfw libglew_shared crypto)
+target_link_libraries(ReMania glfw libglew_shared mbedtls)
 
-target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include)
+target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include)
 if (TRACY MATCHES ON)
     target_compile_definitions(ReMania PUBLIC TRACY_ENABLE)
 endif()
 if (UNIX)
     target_link_libraries(ReMania pthread dl)
 endif()
+
+
+
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
         ${CMAKE_BINARY_DIR}/out/)
