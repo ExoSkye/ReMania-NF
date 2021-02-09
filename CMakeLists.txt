@@ -6,8 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 # Find OpenGL
 find_package(OpenGL 4.3 REQUIRED)
 
-# Get OpenSSL
-add_subdirectory(lib/openssl-cmake)
+add_subdirectory(lib/cryptopp-cmake)
 
 # Options/Overrides for libraries (eg only building shared libraries)
 option(TRACY "Enables the Tracy profiler support" OFF)
@@ -34,10 +33,6 @@ endif()
 if (UNIX)
     target_link_libraries(ReMania pthread dl)
 endif()
-if(WIN32) 
-    target_link_libraries(ReMania crypt32) 
-    list(APPEND EXTRA_LIBS vcruntime user32 gdi32 winmm imm32 ole32 oleaut32 version uuid advapi32 shell32)
-endif() 
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
         ${CMAKE_BINARY_DIR}/out/)

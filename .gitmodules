@@ -1,12 +1,15 @@
 [submodule "lib/glfw3"]
 	path = lib/glfw3
 	url = https://github.com/glfw/glfw.git
+
 [submodule "lib/glew"]
 	path = lib/glew
 	url = https://github.com/omniavinco/glew-cmake
+
 [submodule "lib/glm"]
 	path = lib/glm
 	url = https://github.com/g-truc/glm
+
 [submodule "tracy"]
 	path = tracy
 	url = https://github.com/wolfpld/tracy.git
@@ -14,6 +17,11 @@
 [submodule "lib/lzo"]
 	path = lib/lzo
 	url = https://github.com/nemequ/lzo.git
-[submodule "lib/openssl-cmake"]
-	path = lib/openssl-cmake
-	url = https://github.com/viaduck/openssl-cmake
+
+[submodule "lib/cryptopp-cmake"]
+	path = lib/cryptopp-cmake
+	url = https://github.com/noloader/cryptopp-cmake
+
+[submodule "lib/cryptopp-cmake/cryptopp"]
+ 	path = lib/cryptopp-cmake/cryptopp
+	url = https://github.com/weidai11/cryptopp
