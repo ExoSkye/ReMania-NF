@@ -15,16 +15,18 @@
 #include <queue>
 #include <mutex>
 #include <string>
-#include <openssl/blowfish.h>
+#include <mbedtls/md5.h>
+#include <mbedtls/blowfish.h>
+#include <mbedtls/config.h>
 #include <lzo/lzo1x.h>
-#include <openssl/md5.h>
+
 
 #define TRACY_OPENGL_COLOUR 0xff7f00
 #define TRACY_ENGINE_COLOUR 0xff0000
 #define TRACY_PHYSICS_COLOUR 0x0000ff
 #define TRACY_GAME_LOGIC_COLOUR 0x00ff00
 
-enum SusSystems {
+enum SubSystems {
     Sys_Physics = 1 << 0,
     Sys_Rendering = 1 << 1,
     Sys_GameLogic = 1 << 2,
