@@ -19,7 +19,7 @@ jobs:
       matrix:
         config:
           - {
-            name: "Windows", artifact: "Windows.tar.xz",
+            name: "Windows", artifact: "Windows-MSVC.tar.xz",
             os: windows-latest,
             build_type: "Release", cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
@@ -32,6 +32,11 @@ jobs:
           - {
             name: "Ubuntu-Clang", artifact: "Linux-Clang.tar.xz",
             os: ubuntu-latest,
+            build_type: "Release", cc: "clang", cxx: "clang++"
+          }
+          - {
+            name: "macOS-Clang", artifact: "macOS-Clang.tar.xz",
+            os: macos-latest,
             build_type: "Release", cc: "clang", cxx: "clang++"
           }
 
