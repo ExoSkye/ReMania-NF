@@ -36,6 +36,7 @@ if (UNIX)
 endif()
 if(WIN32) 
     target_link_libraries(ReMania crypt32) 
+    list(APPEND EXTRA_LIBS vcruntime user32 gdi32 winmm imm32 ole32 oleaut32 version uuid advapi32 shell32)
 endif() 
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
