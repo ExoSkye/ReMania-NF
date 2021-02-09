@@ -4,6 +4,7 @@
 
 int main() {
     assetLayer layer;
+    logger::verbose = true;
     layer.printIndex("assets/Packs/Game.pak");
     return 0;
 }

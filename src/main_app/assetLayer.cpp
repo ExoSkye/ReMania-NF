@@ -5,15 +5,16 @@
 #include "assetLayer.h"
 
 void assetLayer::printIndex(const char *file) {
-    FILE* pakFile = fopen(file,"r");
-    FILE* encryptionKeyFile = fopen("assets/Packs/packlist.dat","r");
+    std::ifstream pakFile(file);
+    std::ifstream encryptionKeyFile("assets/Packs/packlist.dat");
 
-    char* magic = (char*)alloca(sizeof(char)*9);
-    magic[8] = '\0';
-    fread(magic,sizeof(char),8,pakFile);
-    logger::log(logger::INFO, ("The magic in the file is: "+std::string(magic)).c_str(), "Assets");
+    std::string magic;
+    magic.resize(8);
+    pakFile.read(magic.data(),8);
 
-    if (strcmp(magic,"NadeoPak") == 0) {
+    logger::log(logger::INFO, ("The magic in the file is: "+magic).c_str(), "Assets");
+
+    if (magic=="NadeoPak") {
         logger::log(logger::INFO, "Magic is correct","Assets");
     }
     else {
@@ -21,53 +22,56 @@ void assetLayer::printIndex(const char *file) {
     }
 
     uint8_t encryptionVer = 0;
-    fread(&encryptionVer,sizeof(uint8_t),1,encryptionKeyFile);
+    encryptionKeyFile.read((char*)&encryptionVer,1);
     logger::log(logger::INFO, ("The encryption key file version is: "+std::to_string(encryptionVer)).c_str(),"Assets");
 
     // Adapted code from https://wiki.xaseco.org/wiki/Packlist.dat
 
     uint8_t numPacks = 0;
-    fread(&numPacks,sizeof(uint8_t),1,encryptionKeyFile);
+    encryptionKeyFile.read((char*)&numPacks,sizeof(uint8_t));
 
     uint32_t salt = 0;
-    fseek(encryptionKeyFile,sizeof(uint32_t),SEEK_CUR);
-    fread(&salt,sizeof(uint32_t),1,encryptionKeyFile);
+    encryptionKeyFile.seekg(sizeof(uint32_t),std::ios_base::cur);
+    encryptionKeyFile.read((char*)&salt,sizeof(uint32_t));
 
     std::string nameKeyString;
     nameKeyString = "6611992868945B0B59536FC3226F3FD0"+std::to_string(salt);
 
     uint8_t nameKey[16];
-    mbedtls_md5((unsigned char *) nameKeyString.c_str(), 32*sizeof(char)+sizeof(uint32_t),
+    mbedtls_md5((unsigned char *) nameKeyString.c_str(), nameKeyString.size(),
                 (unsigned char *) nameKey);
 
     std::unordered_map<std::string,std::string> packs;
 
     std::string name;
+    std::string KeyStringKeyString;
     char encryptedName[32];
-    std::string keyStringKey;
-    char keyString[32];
+    uint8_t keyStringKey[16];
+    uint8_t keyString[32];
     char encryptedKeyString[32];
-    char key[16];
+    uint8_t key[16];
     for (int i = 0; i < numPacks; i++) {
-        fseek(encryptionKeyFile,sizeof(uint8_t),SEEK_CUR);
+        encryptionKeyFile.seekg(1,std::ios_base::cur);
         uint8_t nameLength = 0;
-        fread(&nameLength,sizeof(uint8_t),1,encryptionKeyFile);
-        fread(encryptedName,sizeof(char),nameLength,encryptionKeyFile);
+        encryptionKeyFile >> nameLength;
+        encryptionKeyFile.read(encryptedName,nameLength);
+        encryptionKeyFile.read(encryptedKeyString,32);
 
-        for (int j = 0; j < nameLength; i++)
-            name[j] = encryptedName[j] ^ nameKey[j % 16];
+        for (int j = 0; j < nameLength; j++)
+            name += (char)(encryptedName[j] ^ nameKey[j % 16]);
 
-        keyStringKey = name+std::to_string(salt)+"B97C1205648A66E04F86A1B5D5AF9862";
-        MD5_Update(&keyStringMD5,keyStringKey,69);
-        MD5_Final((unsigned char *)keyStringKey,&keyStringMD5);
-        mbedtls_md5((unsigned char *) keyStringKey.c_str(), keyStringKey.size(),
-                    (unsigned char *) keyString);
-        for (int j = 0; j < 0x20; i++)
+        KeyStringKeyString = name+std::to_string(salt)+"B97C1205648A66E04F86A1B5D5AF9862";
+        mbedtls_md5((unsigned char *) KeyStringKeyString.c_str(), KeyStringKeyString.size(),
+                    (unsigned char *) keyStringKey);
+        for (int j = 0; j < 0x20; j++)
             keyString[j] = encryptedKeyString[j] ^ keyStringKey[j % 16];
 
-        MD5_Update(&keyMD5,keyString,32);
-        MD5_Final((unsigned char*)key, &keyStringMD5);
-        packs[std::string(name)] = std::string(key);
+        mbedtls_md5((unsigned char *) (std::string((char*)keyString)+"NadeoPak").c_str(), 40,
+                    (unsigned char *) key);
+        packs[std::string(name)] = std::string((char*)key);
     }
-
+    logger::log(logger::INFO,"Finished processing packlist.dat","Assets");
+    for (auto pair : packs) {
+            logger::log(logger::VERBOSE,(pair.first+"\t:\t"+pair.second).c_str(),"Assets");
+    }
 }
