@@ -9,7 +9,7 @@ foreach(file ${files})
     string(REGEX REPLACE "(^.*/|\\.[^.]*$)" "" file_without_ext ${file})
     add_executable(${file_without_ext} ${file})
     target_link_libraries(${file_without_ext} glfw libglew_shared mbedtls testLib)
-    target_include_directories(${file_without_ext} PUBLIC src/main_app)
+    target_include_directories(${file_without_ext} PUBLIC src/main_app lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include)
     add_test(${file_without_ext} ${file_without_ext})
     set_tests_properties(${file_without_ext}
             PROPERTIES
