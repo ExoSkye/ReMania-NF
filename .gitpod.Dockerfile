@@ -1,5 +1,5 @@
 FROM gitpod/workspace-full-vnc
-RUN apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev libxrandr-dev xorg-dev
+RUN sudo apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev libxrandr-dev xorg-dev
 
 # Install custom tools, runtimes, etc.
 # For example "bastet", a command-line tetris clone:
