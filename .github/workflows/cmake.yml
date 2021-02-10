@@ -74,7 +74,7 @@ jobs:
         run: cmake -E make_directory ${{runner.workspace}}/build
 
       - name: Setup OpenGL
-        if: matrix.config.name == 'Ubuntu-GCC' || matrix.config.name == 'Ubuntu-Clang'
+        if: matrix.config.name == 'Ubuntu-GCC' || matrix.config.name == 'Ubuntu-Clang' || matrix.config.name == 'Ubuntu-GCC-Debug' || matrix.config.name == 'Ubuntu-Clang-Debug'
         run: sudo apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev libxrandr-dev xorg-dev
 
       - name: Configure CMake
