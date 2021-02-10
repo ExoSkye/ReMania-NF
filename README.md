@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ProtoByter/ReMania-NF)
+
 # ReMania Nations Forever
 
 An open source reimplementation of TrackMania Nations Forever. When completed it will be able to:
