@@ -39,6 +39,27 @@ jobs:
             os: macos-latest,
             build_type: "Release", cc: "clang", cxx: "clang++"
           }
+          - {
+            name: "Windows-Debug", artifact: "Windows-MSVC-Debug.tar.xz",
+            os: windows-latest,
+            build_type: "Debug", cc: "cl", cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+          }
+          - {
+            name: "Ubuntu-GCC-Debug", artifact: "Linux-GCC-Debug.tar.xz",
+            os: ubuntu-latest,
+            build_type: "Debug", cc: "gcc", cxx: "g++"
+          }
+          - {
+            name: "Ubuntu-Clang-Debug", artifact: "Linux-Clang-Debug.tar.xz",
+            os: ubuntu-latest,
+            build_type: "Debug", cc: "clang", cxx: "clang++"
+          }
+          - {
+            name: "macOS-Clang-Debug", artifact: "macOS-Clang-Debug.tar.xz",
+            os: macos-latest,
+            build_type: "Debug", cc: "clang", cxx: "clang++"
+          }
 
 
     steps:
