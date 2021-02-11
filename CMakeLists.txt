@@ -1,5 +1,17 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.10)
 project(ReMania)
+
+# Enable tests
+include(CTest)
+
+option(TESTS "Turn tests on" ON)
+
+set(A A)
+
+if (TESTS MATCHES ON)
+    enable_testing()
+    include(tests/tests.cmake)
+endif()
 
 set(CMAKE_CXX_STANDARD 20)
 

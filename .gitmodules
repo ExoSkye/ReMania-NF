@@ -1,23 +1,29 @@
 [submodule "lib/glfw3"]
 	path = lib/glfw3
 	url = https://github.com/glfw/glfw.git
+        branch="master"
 
 [submodule "lib/glew"]
 	path = lib/glew
 	url = https://github.com/omniavinco/glew-cmake
+        branch="master"
 
 [submodule "lib/glm"]
 	path = lib/glm
 	url = https://github.com/g-truc/glm
+        branch="master"
 
 [submodule "tracy"]
 	path = tracy
 	url = https://github.com/wolfpld/tracy.git
+        branch="master"
 
 [submodule "lib/lzo"]
 	path = lib/lzo
 	url = https://github.com/nemequ/lzo.git
+        branch="master"
 
 [submodule "lib/mbedtls"]
 	path = lib/mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
+        branch="master"
