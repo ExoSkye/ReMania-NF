@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 if (TESTS MATCHES ON)
     enable_testing()
-    include(tests/tests.cmake)
+    add_subdirectory(tests) 
 endif()
 
 
