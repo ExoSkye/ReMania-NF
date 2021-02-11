@@ -46,7 +46,7 @@ if (UNIX)
     target_link_libraries(ReMania pthread dl)
 endif()
 
-
+set(CTEST_BINARY_DIRECTORY ${PROJECT_BINARY_DIR}/tests)
 
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
