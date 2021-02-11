@@ -20,6 +20,7 @@
 #include <mbedtls/blowfish.h>
 #include <mbedtls/config.h>
 #include <lzo/lzo1x.h>
+#include <bitset>
 
 
 #define TRACY_OPENGL_COLOUR 0xff7f00
