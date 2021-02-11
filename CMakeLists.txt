@@ -6,14 +6,13 @@ include(CTest)
 
 option(TESTS "Turn tests on" ON)
 
-set(A A)
+set(CMAKE_CXX_STANDARD 20)
 
 if (TESTS MATCHES ON)
     enable_testing()
     include(tests/tests.cmake)
 endif()
 
-set(CMAKE_CXX_STANDARD 20)
 
 # Find OpenGL
 find_package(OpenGL 4.3 REQUIRED)
