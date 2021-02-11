@@ -93,6 +93,14 @@ jobs:
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: cmake --build . --config $BUILD_TYPE
 
+      - uses: suisei-cn/actions-download-file@v1
+        id: downloadfile  # Remember to give an ID if you need the output
+        name: Download the assets
+        with:
+          url: ${{ secrets.TMNF_DOWNLOAD_LOCATION }}
+          target: ${{runner.workspace}}/build/out/assets/
+
+      
       - name: Test
         working-directory: ${{runner.workspace}}/build
         shell: bash

@@ -1,5 +1,4 @@
-/assets/GameData/
-/assets/Packs/
+/build/
 /*build*/
 /.cache/
 /compile_commands.json

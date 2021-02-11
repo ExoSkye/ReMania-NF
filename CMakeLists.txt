@@ -1,23 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 project(ReMania)
 
-# Enable tests
-include(CTest)
-
 option(TESTS "Turn tests on" ON)
 
 set(CMAKE_CXX_STANDARD 20)
-
-if (TESTS MATCHES ON)
-    enable_testing()
-    add_subdirectory(tests) 
-endif()
-
 
 # Find OpenGL
 find_package(OpenGL 4.3 REQUIRED)
 
 # Options/Overrides for libraries (eg only building shared libraries)
+set(TMNF_DOWNLOAD_LOCATION "" CACHE STRING "URL for retrieving the assets")
+set(TMNF_DOWNLOAD_KEY "" CACHE STRING "URL for retrieving the assets")
 option(TRACY "Enables the Tracy profiler support" OFF)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Build the shared glfw library")
 set(glew-cmake_BUILD_SHARED ON CACHE BOOL "Build the shared glew library")
@@ -33,6 +26,13 @@ add_subdirectory(lib/glew)
 add_subdirectory(lib/glfw3)
 add_subdirectory(lib/lzo)
 add_subdirectory(lib/mbedtls)
+
+include(CTest)
+
+if (TESTS MATCHES ON)
+    enable_testing()
+    include(tests/tests.cmake)
+endif()
 
 set(PREFIX src/main_app)
 add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)

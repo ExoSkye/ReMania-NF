@@ -126,7 +126,7 @@ std::string assetLayer::getKey(uint8_t index, uint32_t salt, const char *name, s
     uint8_t encryptedKeyString[32];
     file.read((char*)&encryptedKeyString,32);
     std::string KeyStringInput = name+std::to_string(salt)+"B97C1205648A66E04F86A1B5D5AF9862";
-    uint8_t keyString[16];
+    uint8_t keyString[32];
     mbedtls_md5((unsigned char *) KeyStringInput.c_str(), KeyStringInput.size(),
                 (unsigned char *) keyString);
 

@@ -1,23 +1,18 @@
-cmake_minimum_required(VERSION 3.10) 
-project(ReManiaTest) 
-
-include(CTest) 
-enable_testing() 
-
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/tests)
 set(CTEST_BINARY_DIRECTORY ${PROJECT_BINARY_DIR}/tests)
 
 file(GLOB files "tests/test_*.cpp")
 file(GLOB libFiles "src/main_app/*.cpp")
-add_library(testLib ${libFiles})
+add_library(testLib STATIC ${libFiles})
 target_include_directories(testLib PUBLIC src/main_app lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include)
+target_link_libraries(testLib glfw libglew_shared mbedtls)
 
 foreach(file ${files})
     string(REGEX REPLACE "(^.*/|\\.[^.]*$)" "" file_without_ext ${file})
     add_executable(${file_without_ext} ${file})
-    target_link_libraries(${file_without_ext} glfw libglew_shared mbedtls testLib)
+    target_link_libraries(${file_without_ext} testLib)
     target_include_directories(${file_without_ext} PUBLIC src/main_app lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include)
-    add_test(${file_without_ext} ${file_without_ext})
+    add_test(${file_without_ext} ${CMAKE_BINARY_DIR}/tests/${file_without_ext} ${CMAKE_BINARY_DIR}/out)
     set_tests_properties(${file_without_ext}
             PROPERTIES
             PASS_REGULAR_EXPRESSION "Test passed")

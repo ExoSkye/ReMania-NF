@@ -4,15 +4,17 @@
 
 #include <assetLayer.h>
 
-int main() {
+int main(int argc, char** argv) {
     assetLayer layer;
-    std::ifstream file("assets/Packs/packlist.dat");
+    std::ifstream file(std::string(argv[1])+"/assets/Packs/packlist.dat");
     bool passed = true;
+    std::ofstream log("getStartIndex.log");
     uint32_t salt = layer.getSalt(file);
-    std::vector<int> start_pos_vec = {0xB, 0x35, 0x5B, 0x83, 0xAA, 0xD1, 0xF9, 0x120, 0x145, 0x16E};
+    std::vector<int> start_pos_vec = {0xA+1, 0x2D+1, 0x50+1, 0x73+1, 0x96+1, 0xB9+1, 0xDC+1, 0xFF+1, 0x122+1, 0x145+1};
 
     for (int i = 0; i < 10; i++) {
-        if (layer.getIndexStart(i,file) != start_pos_vec[i]) {
+        log << layer.getIndexStart(i,file) << "\n";
+        if (layer.getIndexStart(i+1,file) != start_pos_vec[i]) {
             passed = false;
         }
     }
@@ -23,4 +25,5 @@ int main() {
     else {
         printf("Test failed");
     }
+    log.close();
 }
