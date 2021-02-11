@@ -4,6 +4,7 @@ set(CTEST_BINARY_DIRECTORY ${PROJECT_BINARY_DIR}/tests)
 file(GLOB files "tests/test_*.cpp")
 file(GLOB libFiles "src/main_app/*.cpp")
 add_library(testLib ${libFiles})
+target_include_directories(testLib PUBLIC src/main_app lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include)
 
 foreach(file ${files})
     string(REGEX REPLACE "(^.*/|\\.[^.]*$)" "" file_without_ext ${file})
