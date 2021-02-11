@@ -1,3 +1,9 @@
+cmake_minimum_requires(VERSION 3.10) 
+project(ReManiaTest) 
+
+include(CTest) 
+enable_testing() 
+
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/tests)
 set(CTEST_BINARY_DIRECTORY ${PROJECT_BINARY_DIR}/tests)
 
