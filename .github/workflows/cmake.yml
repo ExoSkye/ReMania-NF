@@ -79,7 +79,7 @@ jobs:
         run: cmake -E make_directory ${{runner.workspace}}/build
 
       - name: Setup ARM cross compiler
-        if matrix.config.name == 'Ubuntu-GCC-ARM'
+        if: matrix.config.name == 'Ubuntu-GCC-ARM'
         run: sudo apt-get install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses5-dev build-essential bison flex libssl-dev bc
 
       - name: Setup OpenGL
