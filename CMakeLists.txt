@@ -5,8 +5,10 @@ option(TESTS "Turn tests on" ON)
 
 set(CMAKE_CXX_STANDARD 20)
 
-# Find OpenGL
+# Find OpenGL, GLEW and GLFW3
 find_package(OpenGL 4.3 REQUIRED)
+find_package(GLEW 1.9)
+find_package(glfw3)
 
 # Options/Overrides for libraries (eg only building shared libraries)
 set(TMNF_DOWNLOAD_LOCATION "" CACHE STRING "URL for retrieving the assets")
@@ -22,8 +24,12 @@ set(ENABLE_PROGRAMS OFF CACHE BOOL "Build mbed TLS programs.")
 set(ENABLE_TESTING OFF CACHE BOOL "Build mbed TLS tests.")
 
 # Configure all the libs
-add_subdirectory(lib/glew)
-add_subdirectory(lib/glfw3)
+if (NOT GLEW_FOUND)
+        add_subdirectory(lib/glew)
+endif()
+if (NOT glfw3_FOUND)
+        add_subdirectory(lib/glfw3)
+endif()
 add_subdirectory(lib/lzo)
 add_subdirectory(lib/mbedtls)
 
@@ -36,7 +42,12 @@ endif()
 
 set(PREFIX src/main_app)
 add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)
-target_link_libraries(ReMania glfw libglew_shared mbedtls)
+target_link_libraries(ReMania glfw mbedtls ${OPENGL_LIBRARIES})
+if (NOT GLEW_FOUND)
+        target_link_libraries(ReMania libglew_shared)
+else()
+        target_link_libraries(ReMania ${GLEW_LIBRARIES})
+endif()
 
 target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include)
 if (TRACY MATCHES ON)
@@ -54,12 +65,16 @@ add_custom_command(TARGET ReMania POST_BUILD
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:ReMania> ${CMAKE_BINARY_DIR}/out/)
+if(NOT GLFW3_FOUND)
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:glfw> ${CMAKE_BINARY_DIR}/out/)
+endif()
+if (NOT GLEW_FOUND)
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:libglew_shared> ${CMAKE_BINARY_DIR}/out/)
+endif()
 add_custom_command(TARGET ReMania POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
         ${CMAKE_BINARY_DIR}/out/assets)
