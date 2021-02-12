@@ -25,14 +25,19 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
           }
           - {
-            name: "Ubuntu-GCC", artifact: "Linux-GCC.tar.xz",
+            name: "Ubuntu-GCC-x86", artifact: "Linux-GCC-x86.tar.xz",
             os: ubuntu-latest,
             build_type: "Release", cc: "gcc", cxx: "g++"
           }
           - {
-            name: "Ubuntu-Clang", artifact: "Linux-Clang.tar.xz",
+            name: "Ubuntu-Clang-x86", artifact: "Linux-Clang-x86.tar.xz",
             os: ubuntu-latest,
             build_type: "Release", cc: "clang", cxx: "clang++"
+          }
+          - {
+            name: "Ubuntu-GCC-ARM", artifact: "Linux-GCC-ARM.tar.xz",
+            os: ubuntu-latest,
+            build_type: "Release", cc: "arm-linux-gnueabi-gcc", cxx: "arm-linux-gnueabi-g++"
           }
           - {
             name: "macOS-Clang", artifact: "macOS-Clang.tar.xz",
@@ -73,6 +78,10 @@ jobs:
         # We'll use this as our working directory for all subsequent commands
         run: cmake -E make_directory ${{runner.workspace}}/build
 
+      - name: Setup ARM cross compiler
+        if matrix.config.name == 'Ubuntu-GCC-ARM'
+        run: sudo apt-get install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses5-dev build-essential bison flex libssl-dev bc
+
       - name: Setup OpenGL
         if: matrix.config.name == 'Ubuntu-GCC' || matrix.config.name == 'Ubuntu-Clang' || matrix.config.name == 'Ubuntu-GCC-Debug' || matrix.config.name == 'Ubuntu-Clang-Debug'
         run: sudo apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev libxrandr-dev xorg-dev
@@ -85,7 +94,7 @@ jobs:
         # Note the current convention is to use the -S and -B options here to specify source
         # and build directories, but this is only available with CMake 3.13 and higher.
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}
 
       - name: Build
         working-directory: ${{runner.workspace}}/build
