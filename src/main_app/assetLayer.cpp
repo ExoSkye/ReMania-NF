@@ -126,13 +126,60 @@ std::string assetLayer::getMagic(std::ifstream &file) {
     return magic;
 }
 
-void assetLayer::CalcIVXor(int _ivXor, char *pInput, int count) {
+void assetLayer::CalcIVXor(uint64_t _ivXor, char *pInput, int count) {
     for (int i = 0; i < count; i++)
     {
-        uint lopart = _ivXor & 0xFFFFFFFF;
-        uint hipart = _ivXor >> 32;
+        uint64_t lopart = _ivXor & 0xFFFFFFFF;
+        uint64_t hipart = _ivXor >> 32;
         lopart = (pInput[i] | 0xAA) ^ ((lopart << 13) | (hipart >> 19));
         hipart = (_ivXor << 13) >> 32;
         _ivXor = (hipart << 32) | lopart;
+    }
+}
+
+PakContents assetLayer::decodePaks(std::string key, std::ifstream& file) {
+    getPackVer(file);
+    uint64_t ivInt = getHeaderIV(file);
+    char* iv = (char*)&ivInt;
+    file.seekg(0,std::ios_base::end);
+    int length = file.tellg();
+    int blowfishOffset = sizeof(char)*8+sizeof(uint32_t)+sizeof(uint64_t);
+    file.seekg(blowfishOffset);
+    std::string data;
+    data.resize(length-blowfishOffset,'\0');
+    decryptBlowfish(data,key.data(),iv);
+    return PakContents{};
+}
+
+uint64_t assetLayer::getHeaderIV(std::ifstream& file) {
+    file.seekg(sizeof(char)*8+sizeof(uint32_t));
+    uint64_t iv;
+    file.read((char*)&iv,8);
+    return iv;
+}
+
+std::string assetLayer::decryptBlowfish(std::string& data, char* key, char* IV) {
+    mbedtls_blowfish_context ctx;
+    mbedtls_blowfish_init(&ctx);
+    mbedtls_blowfish_setkey(&ctx,(const unsigned char*)&key,16);
+    if (data.size()%8 != 0) {
+        logger::log(logger::FATAL,"Data read from pack file didn't have a length which was is a multiple of 8","Assets",__FILE__,__LINE__);
+    }
+    std::string out;
+    out.resize(data.size(),'\0');
+    mbedtls_blowfish_crypt_cbc(&ctx,MBEDTLS_BLOWFISH_DECRYPT,data.size(),(unsigned char*)IV,(unsigned char*)data.data(),(unsigned char*)out.data());
+    return out;
+}
+
+uint32_t assetLayer::getPackVer(std::ifstream& file) {
+    file.seekg(sizeof(char)*8);
+    uint32_t version;
+    file.read((char*)&version,4);
+    if (version != 3) {
+        logger::log(logger::FATAL,"Pack versions over than 3 (TMNF) are not supported. Make sure that these pack files are from TrackMania Nations Forever","Assets",__FILE__,__LINE__);
+        return -1; // Unreachable code but the compiler doesn't want to compile it without
+    }
+    else {
+        return version;
     }
 }

@@ -21,7 +21,7 @@
 #include <mbedtls/config.h>
 #include <lzo/lzo1x.h>
 #include <bitset>
-
+#include <memory>
 
 #define TRACY_OPENGL_COLOUR 0xff7f00
 #define TRACY_ENGINE_COLOUR 0xff0000

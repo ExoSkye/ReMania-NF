@@ -16,6 +16,11 @@ readFile(file,pos,len,varname)
 file.seekg(pos);                                       \
 file.read((char*)&varname,len);
 
+enum nodeType {
+    File,
+    Folder
+};
+
 struct FolderDesc {
     uint32_t parentFolderIndex;
     std::string name;
@@ -32,6 +37,17 @@ struct FileDesc {
     uint64_t flags;
 };
 
+struct Node {
+    bool root = false;
+    std::shared_ptr<Node> parent;
+    std::vector<std::shared_ptr<Node>> children;
+    nodeType type;
+    union data {
+        FolderDesc folder;
+        FileDesc file;
+    };
+};
+
 using uint128_t = std::bitset<128>;
 
 struct PakContents {
@@ -42,11 +58,7 @@ struct PakContents {
 
     uint128_t unused;
     uint32_t flags;
-    uint32_t numFolders;
-    std::vector<FolderDesc> folders;
-
-    uint32_t numFiles;
-    std::vector<FileDesc> files;
+    Node fileStructure;
 };
 
 class assetLayer {
@@ -59,8 +71,11 @@ public:
     std::string getKey(uint8_t index, uint32_t salt, const char* name, std::ifstream& file);
     long getIndexStart(uint8_t index, std::ifstream& file);
     std::string getMagic(std::ifstream& file);
-    uint8_t getPackVer(std::ifstream&);
-    void CalcIVXor(int ivXor, char* pInput, int count);
+    uint32_t getPackVer(std::ifstream& file);
+    uint64_t getHeaderIV(std::ifstream& file);
+    std::string decryptBlowfish(std::string& data, char* key, char* IV);
+    void CalcIVXor(uint64_t ivXor, char* pInput, int count);
+    PakContents decodePaks(std::string key, std::ifstream& file);
 };
 
 #endif //REMANIA_ASSETLAYER_H
