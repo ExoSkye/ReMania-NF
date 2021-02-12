@@ -80,8 +80,8 @@ jobs:
 
       - name: Setup ARM cross compiler
         if: matrix.config.name == 'Ubuntu-GCC-ARM'
-        run: sudo apt-get install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses5-dev build-essential bison flex libssl-dev bc
-
+        run: sudo apt-get install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses5-dev build-essential bison flex libssl-dev bc gcc-arm-linux-gnueabi g++-arm-linux-gnueabi 
+     
       - name: Setup OpenGL
         if: matrix.config.os == 'ubuntu-latest'
         run: sudo apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev libxrandr-dev xorg-dev
