@@ -4,14 +4,13 @@
 
 int main() {
     // Code for getting values used in the key test
-    assetLayer layer;
     logger::verbose = true;
     std::ifstream file("assets/Packs/packlist.dat");
-    uint32_t salt = layer.getSalt(file);
+    uint32_t salt = assetLayer::getSalt(file);
     for (int i = 1; i < 11; i++) {
-        std::string key = layer.getKey(i,salt,layer.getName(i,salt,file).c_str(),file);
+        std::string key = assetLayer::getKey(i,salt,assetLayer::getName(i,salt,file).c_str(),file);
         printf("%s\n",key.c_str());
     }
-    //layer.printIndex("assets/Packs/Game.pak");
+    //assetLayer::printIndex("assets/Packs/Game.pak");
     return 0;
 }

@@ -5,9 +5,8 @@
 #include <assetLayer.h>
 
 int main(int argc, char** argv) {
-    assetLayer layer;
     std::ifstream file(std::string(argv[1])+"/assets/Packs/packlist.dat");
-    if (layer.getSalt(file) == 374512307) {
+    if (assetLayer::getSalt(file) == 374512307) {
         printf("Test passed");
     }
     else {

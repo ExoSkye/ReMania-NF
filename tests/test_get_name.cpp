@@ -5,11 +5,10 @@
 #include <assetLayer.h>
 
 int main(int argc, char** argv) {
-    assetLayer layer;
     std::ifstream file(std::string(argv[1])+"/assets/Packs/packlist.dat");
     std::ofstream log("log.log");
     bool passed = true;
-    uint32_t salt = layer.getSalt(file);
+    uint32_t salt = assetLayer::getSalt(file);
     std::vector<std::string> names = {"0",
                                       "1",
                                       "2",
@@ -22,8 +21,8 @@ int main(int argc, char** argv) {
                                       "9"};
     
     for (int i = 0; i < 10; i++) {
-        log << layer.getName(i+1,salt,file) << "\n";
-        if (layer.getName(i+1,salt,file) != names[i]) {
+        log << assetLayer::getName(i+1,salt,file) << "\n";
+        if (assetLayer::getName(i+1,salt,file) != names[i]) {
             passed = false;
         }
     }   

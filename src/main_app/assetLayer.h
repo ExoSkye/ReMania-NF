@@ -61,8 +61,7 @@ struct PakContents {
     Node fileStructure;
 };
 
-class assetLayer {
-public:
+namespace assetLayer {
     void printIndex(const char* file);
     uint32_t getSalt(std::ifstream& file);
     uint8_t getPackListVer(std::ifstream& file);
