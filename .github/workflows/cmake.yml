@@ -61,6 +61,11 @@ jobs:
             build_type: "Debug", cc: "clang", cxx: "clang++"
           }
           - {
+            name: "Ubuntu-GCC-ARM", artifact: "Linux-GCC-ARM-Debug.tar.xz",
+            os: ubuntu-latest,
+            build_type: "Debug", cc: "arm-linux-gnueabi-gcc", cxx: "arm-linux-gnueabi-g++"
+          }
+          - {
             name: "macOS-Clang-Debug", artifact: "macOS-Clang-Debug.tar.xz",
             os: macos-latest,
             build_type: "Debug", cc: "clang", cxx: "clang++"
@@ -80,8 +85,12 @@ jobs:
 
       - name: Setup ARM cross compiler
         if: matrix.config.name == 'Ubuntu-GCC-ARM'
-        run: sudo apt-get install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses5-dev build-essential bison flex libssl-dev bc gcc-arm-linux-gnueabi g++-arm-linux-gnueabi 
-     
+        run: |
+          sudo apt-get install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses5-dev build-essential bison flex libssl-dev bc gcc-arm-linux-gnueabi g++-arm-linux-gnueabi 
+          sudo dpkg add-architecture arm64
+          sudo apt update
+          sudo apt install libglu1-mesa-dev:arm64 freeglut3-dev:arm64 mesa-common-dev:arm64 libxrandr-dev:arm64 xorg-dev:arm64
+          
       - name: Setup OpenGL
         if: matrix.config.os == 'ubuntu-latest'
         run: sudo apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev libxrandr-dev xorg-dev
