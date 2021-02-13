@@ -1,5 +1,8 @@
 language: cpp
-arch: arm64
+arch: 
+  - arm64
+  - s390x
+  - ppc64le
 os: linux
 dist: focal
 compiler:
