@@ -14,4 +14,4 @@ It won't be able to:
 ## CI
 
 Builds for x86 can be found at https://github.com/ProtoByter/ReMania-NF/actions/ <br>
-Builds for other ARM can be found at (https://travis-ci.com/github/ProtoByter/ReMania-NF)
+Builds for other ARM can be found at https://travis-ci.com/github/ProtoByter/ReMania-NF
