@@ -87,7 +87,7 @@ jobs:
         if: matrix.config.name == 'Ubuntu-GCC-ARM'
         run: |
           sudo apt-get install libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses5-dev build-essential bison flex libssl-dev bc gcc-arm-linux-gnueabi g++-arm-linux-gnueabi 
-          sudo dpkg add-architecture arm64
+          sudo dpkg --add-architecture arm64
           sudo apt update
           sudo apt install libglu1-mesa-dev:arm64 freeglut3-dev:arm64 mesa-common-dev:arm64 libxrandr-dev:arm64 xorg-dev:arm64
           
@@ -112,6 +112,7 @@ jobs:
         run: cmake --build . --config $BUILD_TYPE
       
       - name: Test
+        if: matrix.config.cc != 'arm-linux-gnueabi-gcc'
         working-directory: ${{runner.workspace}}/build
         shell: bash
         # Execute tests defined by the CMake configuration.  
