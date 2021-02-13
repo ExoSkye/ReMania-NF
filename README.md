@@ -10,3 +10,8 @@ An open source reimplementation of TrackMania Nations Forever. When completed it
 
 It won't be able to:
 - Login using a TrankMania account (I will add my own system for it)
+
+## CI
+
+Builds for x86 can be found at https://github.com/ProtoByter/ReMania-NF/actions/
+Builds for other architectures (ppc64le, s390x, arm64, arm64-graviton2) can be found at (https://travis-ci.com/github/ProtoByter/ReMania-NF *I think, I'm only just stting it up*)
