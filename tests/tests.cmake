@@ -17,7 +17,7 @@ foreach(file ${files})
         target_link_libraries(${file_without_ext} testLib)
         target_include_directories(${file_without_ext} PUBLIC src/main_app lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include lib/endian/include)
         if(IS_BIG_ENDIAN)
-                target_compile_definitions(ReMania __BIG_ENDIAN__)
+                target_compile_definitions(${file_without_ext} __BIG_ENDIAN__)
         endif()
         add_test(${file_without_ext} ${CMAKE_BINARY_DIR}/tests/${file_without_ext} ${CMAKE_BINARY_DIR}/out)
         set_tests_properties(${file_without_ext}
