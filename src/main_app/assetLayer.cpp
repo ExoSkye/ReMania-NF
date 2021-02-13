@@ -43,6 +43,7 @@ void assetLayer::printIndex(const char *file) {
 uint32_t assetLayer::getSalt(std::ifstream &file) {
     file.seekg(6);
     readFileWithDecl(file, 6, 4, ret, uint32_t)
+    ret = makeLE(uint32_t,ret);
     return ret;
 }
 
@@ -155,6 +156,7 @@ uint64_t assetLayer::getHeaderIV(std::ifstream& file) {
     file.seekg(sizeof(char)*8+sizeof(uint32_t));
     uint64_t iv;
     file.read((char*)&iv,8);
+    iv = makeLE(uint64_t,iv);
     return iv;
 }
 
@@ -175,7 +177,7 @@ uint32_t assetLayer::getPackVer(std::ifstream& file) {
     file.seekg(sizeof(char)*8);
     uint32_t version;
     file.read((char*)&version,4);
-    if (version != 3) {
+    if (makeLE(uint32_t,version) != 3) {
         logger::log(logger::FATAL,"Pack versions over than 3 (TMNF) are not supported. Make sure that these pack files are from TrackMania Nations Forever","Assets",__FILE__,__LINE__);
         return -1; // Unreachable code but the compiler doesn't want to compile it without
     }
