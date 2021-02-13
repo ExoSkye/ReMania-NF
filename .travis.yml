@@ -1,4 +1,5 @@
 language: cpp
+cache: ccache
 arch: 
   - arm64
   - s390x
