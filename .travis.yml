@@ -9,6 +9,12 @@ compiler:
   - gcc
   - clang
 
+before_install:
+  - sudo apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev libxrandr-dev xorg-dev -y
+addons:
+  apt:
+    update: true
+
 before_script:
   # create a build folder for the out-of-source build
   - mkdir build
