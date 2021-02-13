@@ -61,7 +61,7 @@ jobs:
             build_type: "Debug", cc: "clang", cxx: "clang++"
           }
           - {
-            name: "Ubuntu-GCC-ARM", artifact: "Linux-GCC-ARM-Debug.tar.xz",
+            name: "Ubuntu-GCC-ARM-Debug", artifact: "Linux-GCC-ARM-Debug.tar.xz",
             os: ubuntu-latest,
             build_type: "Debug", cc: "arm-linux-gnueabi-gcc", cxx: "arm-linux-gnueabi-g++"
           }
