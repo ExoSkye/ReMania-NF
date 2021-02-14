@@ -10,10 +10,6 @@ find_package(OpenGL 4.3 REQUIRED)
 find_package(GLEW 1.9)
 find_package(glfw3)
 
-# Detect endian
-include(TestBigEndian)
-TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
-
 # Options/Overrides for libraries (eg only building shared libraries)
 option(TRACY "Enables the Tracy profiler support" OFF)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Build the shared glfw library")
@@ -45,9 +41,7 @@ endif()
 set(PREFIX src/main_app)
 add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)
 target_link_libraries(ReMania glfw mbedtls ${OPENGL_LIBRARIES})
-if(IS_BIG_ENDIAN)
-        target_compile_definitions(ReMania PUBLIC __BIG_ENDIAN__)
-endif()
+
 if (NOT GLEW_FOUND)
         target_link_libraries(ReMania libglew_shared)
 else()

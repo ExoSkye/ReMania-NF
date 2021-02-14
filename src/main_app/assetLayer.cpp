@@ -3,6 +3,7 @@
 //
 
 #include "assetLayer.h"
+#include "mbedtls/blowfish.h"
 
 void assetLayer::printIndex(const char *file) {
     std::ifstream pakFile(file);
@@ -43,7 +44,6 @@ void assetLayer::printIndex(const char *file) {
 uint32_t assetLayer::getSalt(std::ifstream &file) {
     file.seekg(6);
     readFileWithDecl(file, 6, 4, ret, uint32_t)
-    ret = makeLE(uint32_t,ret);
     return ret;
 }
 
@@ -156,20 +156,22 @@ uint64_t assetLayer::getHeaderIV(std::ifstream& file) {
     file.seekg(sizeof(char)*8+sizeof(uint32_t));
     uint64_t iv;
     file.read((char*)&iv,8);
-    iv = makeLE(uint64_t,iv);
     return iv;
 }
 
 std::string assetLayer::decryptBlowfish(std::string& data, char* key, char* IV) {
     mbedtls_blowfish_context ctx;
     mbedtls_blowfish_init(&ctx);
-    mbedtls_blowfish_setkey(&ctx,(const unsigned char*)&key,16);
+    mbedtls_blowfish_setkey(&ctx,(const unsigned char*)&key,256);
     if (data.size()%8 != 0) {
-        logger::log(logger::FATAL,"Data read from pack file didn't have a length which was is a multiple of 8","Assets",__FILE__,__LINE__);
+        logger::log(logger::FATAL,"Data read from pack file didn't have a length which is a multiple of 8","Assets",__FILE__,__LINE__);
     }
     std::string out;
     out.resize(data.size(),'\0');
-    mbedtls_blowfish_crypt_cbc(&ctx,MBEDTLS_BLOWFISH_DECRYPT,data.size(),(unsigned char*)IV,(unsigned char*)data.data(),(unsigned char*)out.data());
+    if(mbedtls_blowfish_crypt_cbc(&ctx,MBEDTLS_BLOWFISH_DECRYPT,data.size(),(unsigned char*)IV,(unsigned char*)data.data(),(unsigned char*)out.data()) != 0) {
+        logger::log(logger::ERROR,"Decryption failed","Assets",__FILE__,__LINE__);
+    }
+    mbedtls_blowfish_free(&ctx);
     return out;
 }
 
@@ -177,7 +179,7 @@ uint32_t assetLayer::getPackVer(std::ifstream& file) {
     file.seekg(sizeof(char)*8);
     uint32_t version;
     file.read((char*)&version,4);
-    if (makeLE(uint32_t,version) != 3) {
+    if (version != 3) {
         logger::log(logger::FATAL,"Pack versions over than 3 (TMNF) are not supported. Make sure that these pack files are from TrackMania Nations Forever","Assets",__FILE__,__LINE__);
         return -1; // Unreachable code but the compiler doesn't want to compile it without
     }
