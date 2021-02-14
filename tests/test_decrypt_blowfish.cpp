@@ -47,7 +47,9 @@ int main() {
 
         mbedtls_blowfish_context ctx;
         mbedtls_blowfish_init(&ctx);
-        mbedtls_blowfish_setkey(&ctx,(const unsigned char*)i.key.data(),256);
+         if (mbedtls_blowfish_setkey(&ctx,(const unsigned char*)i.key.data(),128) != 0) {
+             logger::log(logger::FATAL,"Setting key failed","Assets",__FILE__,__LINE__);
+         }
         
         if (data.size()%8 != 0) {
             logger::log(logger::FATAL,"Data read from pack file didn't have a length which is a multiple of 8","Assets",__FILE__,__LINE__);
@@ -55,11 +57,11 @@ int main() {
 
         std::string supossedPlainText;
         supossedPlainText.resize(1024,'|');
-        for (int j = 0; j < data.size(); j += 8) {
-            if(mbedtls_blowfish_crypt_cbc(&ctx,MBEDTLS_BLOWFISH_DECRYPT,8,(unsigned char*)i.iv.data(),(unsigned char*)&data.data()[j],(unsigned char*)&supossedPlainText.data()[j]) != 0) {
-                logger::log(logger::ERROR,std::string("Decryption failed at byte "+std::to_string(j)).c_str(),"Assets",__FILE__,__LINE__);
+        //for (int j = 0; j < data.size(); j += 8) {
+            if(mbedtls_blowfish_crypt_cbc(&ctx,MBEDTLS_BLOWFISH_DECRYPT,1024,(unsigned char*)i.iv.data(),(unsigned char*)data.data(),(unsigned char*)supossedPlainText.data()) != 0) {
+                logger::log(logger::ERROR,"Decryption failed","Assets",__FILE__,__LINE__);
             }
-        }
+        //}
         mbedtls_blowfish_free(&ctx);
 
 
