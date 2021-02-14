@@ -38,7 +38,7 @@ int main() {
     bool passed = true;
 
     for (auto& i : files) {
-        std::ifstream file(i.fileName);
+        std::ifstream file(i.fileName,std::ifstream::binary);
         std::string data;
         data.resize(1024,'|');
         file.read(data.data(),1024);
