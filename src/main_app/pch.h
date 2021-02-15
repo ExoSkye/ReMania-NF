@@ -23,6 +23,7 @@
 #include <bitset>
 #include <memory>
 #include <random>
+#include <inttypes.h>
 
 #define TRACY_OPENGL_COLOUR 0xff7f00
 #define TRACY_ENGINE_COLOUR 0xff0000

@@ -73,7 +73,7 @@ namespace assetLayer {
     uint32_t getPackVer(std::ifstream& file);
     uint64_t getHeaderIV(std::ifstream& file);
     std::string decryptBlowfish(std::string& data, char* key, char* IV);
-    void CalcIVXor(uint64_t ivXor, char* pInput, int count);
+    uint64_t CalcIVXor(uint64_t ivXor, char* pInput, int count);
     PakContents decodePaks(std::string key, std::ifstream& file);
 };
 

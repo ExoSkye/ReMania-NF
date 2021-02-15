@@ -1,6 +1,6 @@
 //
 // Created by Bob on 08/02/2021.
-//
+// 
 
 #include "assetLayer.h"
 #include "mbedtls/blowfish.h"
@@ -127,7 +127,7 @@ std::string assetLayer::getMagic(std::ifstream &file) {
     return magic;
 }
 
-void assetLayer::CalcIVXor(uint64_t _ivXor, char *pInput, int count) {
+uint64_t assetLayer::CalcIVXor(uint64_t _ivXor, char *pInput, int count) {
     for (int i = 0; i < count; i++)
     {
         uint64_t lopart = _ivXor & 0xFFFFFFFF;
@@ -136,6 +136,7 @@ void assetLayer::CalcIVXor(uint64_t _ivXor, char *pInput, int count) {
         hipart = (_ivXor << 13) >> 32;
         _ivXor = (hipart << 32) | lopart;
     }
+    return _ivXor;
 }
 
 PakContents assetLayer::decodePaks(std::string key, std::ifstream& file) {
@@ -153,9 +154,11 @@ PakContents assetLayer::decodePaks(std::string key, std::ifstream& file) {
 }
 
 uint64_t assetLayer::getHeaderIV(std::ifstream& file) {
-    file.seekg(sizeof(char)*8+sizeof(uint32_t));
+    file.seekg(12);
+    printf("%llu\n", file.tellg());
     uint64_t iv;
     file.read((char*)&iv,8);
+    printf("%llu\n", file.tellg());
     return iv;
 }
 
