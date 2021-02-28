@@ -42,32 +42,11 @@ int main() {
         std::string data;
         data.resize(1024,'|');
         file.read(data.data(),1024);
-        printf("%i %s\n",file.is_open(),data.c_str());
 
-        mbedtls_blowfish_context ctx;
-        mbedtls_blowfish_init(&ctx);
-         if (mbedtls_blowfish_setkey(&ctx,(const unsigned char*)i.key.data(),128) != 0) {
-             logger::log(logger::FATAL,"Setting key failed","Assets",__FILE__,__LINE__);
-         }
-
-        if (data.size()%8 != 0) {
-            logger::log(logger::FATAL,"Data read from pack file didn't have a length which is a multiple of 8","Assets",__FILE__,__LINE__);
-        }
-
-        std::string supossedPlainText;
-        supossedPlainText.resize(1024,'|');
-        //for (int j = 0; j < data.size(); j += 8) {
-            if(mbedtls_blowfish_crypt_cbc(&ctx,MBEDTLS_BLOWFISH_DECRYPT,1024,(unsigned char*)i.iv.data(),(unsigned char*)data.data(),(unsigned char*)supossedPlainText.data()) != 0) {
-                logger::log(logger::ERROR,"Decryption failed","Assets",__FILE__,__LINE__);
-            }
-        //}
-        mbedtls_blowfish_free(&ctx);
-
-
+        std::string supossedPlainText = assetLayer::decryptBlowfish(data,i.key.data(),i.iv.data());
 
         if (supossedPlainText != i.plainText) {
             passed = false;
-            printf("%lu %s\n",supossedPlainText.size(),supossedPlainText.c_str());
         }
     }
     if (passed) {

@@ -48,7 +48,7 @@ else()
         target_link_libraries(ReMania ${GLEW_LIBRARIES})
 endif()
 
-target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include lib/endian/include())
+target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include lib/fsx)
 if (TRACY MATCHES ON)
     target_compile_definitions(ReMania PUBLIC TRACY_ENABLE)
 endif()

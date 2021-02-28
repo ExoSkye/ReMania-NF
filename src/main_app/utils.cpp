@@ -19,10 +19,10 @@ void logger::log(type logType, const char *logMsg, const char* area, const char 
             printf("[WARN: %s] %s\n",area,logMsg);
             break;
         case ERROR:
-            printf("[ERROR: %s] %s at %s:%i\n",area,logMsg,file,line);
+            printf("[ERROR: %s] %s [%s:%i]\n",area,logMsg,file,line);
             break;
         case FATAL:
-            printf("[FATAL ERROR: %s] %s at %s:%i\n",area,logMsg,file,line);
+            printf("[FATAL ERROR: %s] %s [%s:%i]\n",area,logMsg,file,line);
             exit(1);
             break;
     }
