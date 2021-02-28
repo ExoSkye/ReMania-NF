@@ -39,7 +39,7 @@ if (TESTS MATCHES ON)
 endif()
 
 set(PREFIX src/main_app)
-add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)
+add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp src/main_app/physics.cpp src/main_app/physics.h)
 target_link_libraries(ReMania glfw mbedtls ${OPENGL_LIBRARIES})
 
 if (NOT GLEW_FOUND)
