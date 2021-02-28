@@ -27,6 +27,6 @@
 	path = lib/mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
         branch="master"
-[submodule "libs/fsx"]
-	path = libs/fsx
+[submodule "lib/fsx"]
+	path = lib/fsx
 	url = https://github.com/ProtoByter/FilesystemX
