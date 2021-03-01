@@ -23,7 +23,9 @@
 #include <bitset>
 #include <memory>
 #include <random>
-#include <inttypes.h>
+#include <cinttypes>
+#include <sstream>
+#include <FilesystemX.hpp>
 
 #define TRACY_OPENGL_COLOUR 0xff7f00
 #define TRACY_ENGINE_COLOUR 0xff0000

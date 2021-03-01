@@ -37,30 +37,6 @@ struct FileDesc {
     uint64_t flags;
 };
 
-struct Node {
-    bool root = false;
-    std::shared_ptr<Node> parent;
-    std::vector<std::shared_ptr<Node>> children;
-    nodeType type;
-    union data {
-        FolderDesc folder;
-        FileDesc file;
-    };
-};
-
-using uint128_t = std::bitset<128>;
-
-struct PakContents {
-    uint64_t headerIV;
-    uint128_t headerMD5;
-    uint32_t gbxHeadersStart; // offset to metadata section
-    uint32_t dataStart;
-
-    uint128_t unused;
-    uint32_t flags;
-    Node fileStructure;
-};
-
 namespace assetLayer {
     void printIndex(const char* file);
     uint32_t getSalt(std::ifstream& file);
@@ -71,10 +47,10 @@ namespace assetLayer {
     long getIndexStart(uint8_t index, std::ifstream& file);
     std::string getMagic(std::ifstream& file);
     uint32_t getPackVer(std::ifstream& file);
-    uint64_t getHeaderIV(std::ifstream& file);
+    std::string getHeaderIV(std::ifstream& file);
     std::string decryptBlowfish(std::string& data, char* key, char* IV);
     uint64_t CalcIVXor(uint64_t ivXor, char* pInput, int count);
-    PakContents decodePaks(std::string key, std::ifstream& file);
+    void extractPaks();
 };
 
 #endif //REMANIA_ASSETLAYER_H

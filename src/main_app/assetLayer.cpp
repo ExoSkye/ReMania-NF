@@ -139,41 +139,32 @@ uint64_t assetLayer::CalcIVXor(uint64_t _ivXor, char *pInput, int count) {
     return _ivXor;
 }
 
-PakContents assetLayer::decodePaks(std::string key, std::ifstream& file) {
-    getPackVer(file);
-    uint64_t ivInt = getHeaderIV(file);
-    char* iv = (char*)&ivInt;
-    file.seekg(0,std::ios_base::end);
-    int length = file.tellg();
-    int blowfishOffset = sizeof(char)*8+sizeof(uint32_t)+sizeof(uint64_t);
-    file.seekg(blowfishOffset);
-    std::string data;
-    data.resize(length-blowfishOffset,'\0');
-    decryptBlowfish(data,key.data(),iv);
-    return PakContents{};
-}
-
-uint64_t assetLayer::getHeaderIV(std::ifstream& file) {
+std::string assetLayer::getHeaderIV(std::ifstream& file) {
     file.seekg(12);
-    printf("%llu\n", file.tellg());
-    uint64_t iv;
-    file.read((char*)&iv,8);
-    printf("%llu\n", file.tellg());
+    //printf("%llu\n", file.tellg());
+    std::string iv;
+    file.read((char*)&iv[0],8);
+    //printf("%llu\n", file.tellg());
     return iv;
 }
 
 std::string assetLayer::decryptBlowfish(std::string& data, char* key, char* IV) {
     mbedtls_blowfish_context ctx;
     mbedtls_blowfish_init(&ctx);
-    mbedtls_blowfish_setkey(&ctx,(const unsigned char*)&key,256);
+    if (mbedtls_blowfish_setkey(&ctx,(const unsigned char*)key,128) != 0) {
+        logger::log(logger::FATAL,"Setting key failed","Assets",__FILE__,__LINE__);
+    }
+
     if (data.size()%8 != 0) {
         logger::log(logger::FATAL,"Data read from pack file didn't have a length which is a multiple of 8","Assets",__FILE__,__LINE__);
     }
-    std::string out;
-    out.resize(data.size(),'\0');
-    if(mbedtls_blowfish_crypt_cbc(&ctx,MBEDTLS_BLOWFISH_DECRYPT,data.size(),(unsigned char*)IV,(unsigned char*)data.data(),(unsigned char*)out.data()) != 0) {
-        logger::log(logger::ERROR,"Decryption failed","Assets",__FILE__,__LINE__);
-    }
+
+    std::string out = data;
+    //for (int j = 0; j < data.size(); j += 256) {
+        if(mbedtls_blowfish_crypt_cbc(&ctx,MBEDTLS_BLOWFISH_DECRYPT,data.size(),(unsigned char*)IV,(unsigned char*)data.data(),(unsigned char*)out.data()) != 0) {
+            logger::log(logger::ERROR,"Decryption failed","Assets",__FILE__,__LINE__);
+        }
+    //}
     mbedtls_blowfish_free(&ctx);
     return out;
 }
@@ -188,5 +179,74 @@ uint32_t assetLayer::getPackVer(std::ifstream& file) {
     }
     else {
         return version;
+    }
+}
+
+void assetLayer::extractPaks() {
+    ProtoFS::FilesystemX packs("assets/Packs");
+    std::ifstream packlist("assets/Packs/packlist.dat");
+    if (getPackListVer(packlist) != 1) {
+        logger::log(logger::FATAL, "Pack list version != 1 (likely a corrupt file), Aborting...","Assets",__FILE__,__LINE__);
+    }
+    uint32_t salt = getSalt(packlist);
+
+    std::unordered_map<std::string,std::string> keys;
+
+    for (int i = 0; i < getNumPaks(packlist); i++) {
+        keys[getName(i,salt,packlist)] = getKey(i, salt, getName(i,salt,packlist).c_str(), packlist);
+    }
+    for (auto i : packs.ls()) {
+        if (i.getExt() != ".pak") {
+            continue;
+        }
+        std::ifstream pack(i.filePath);
+        if (getMagic(pack) != "NadeoPak") {
+            logger::log(logger::FATAL, "Pak file magic != NadeoPak, Aborting","Assets",__FILE__,__LINE__);
+        }
+        std::string file_no_ext = i.fileName.substr(0,i.fileName.length()-4);
+        std::string key = keys[file_no_ext];
+        getPackVer(pack);
+        std::string encrypted;
+        pack.seekg(0,std::ios_base::seekdir::_S_end);
+        int len = pack.tellg();
+        encrypted.resize(len-24);
+        pack.seekg(20);
+        pack.read(encrypted.data(),encrypted.size());
+        std::string iv = getHeaderIV(pack);
+        std::string data = decryptBlowfish(encrypted,key.data(),iv.data());
+        std::istringstream sstream(data);
+        std::string md5;
+        md5.resize(16);
+        sstream.read(md5.data(),16);
+        for (int pos = 0; pos < 16; pos++) {
+            data[pos] = '\0';
+        }
+        mbedtls_md5_context ctx;
+        mbedtls_md5_init(&ctx);
+        std::string md5_ret;
+        md5_ret.resize(16);
+        mbedtls_md5_ret((const unsigned char *)data.c_str(), data.size(),
+                        (unsigned char *)md5_ret.data());
+        if (md5_ret != md5) {
+            logger::log(logger::WARN,"Calculated MD5 sum of Pak file doesn't match the stored one","Assets",__FILE__,__LINE__);
+        }
+        sstream.seekg(52);
+        uint32_t numFolders;
+        sstream.read((char*)&numFolders,4);
+        std::vector<std::pair<int,std::string>> folderIndicies;
+        for (int j = 0; j < numFolders; j++) {
+            uint32_t parentIndex;
+            sstream.read((char*)&parentIndex, 4);
+            std::string name;
+            std::getline(sstream,name,'\0');
+            folderIndicies.emplace_back(parentIndex, name);
+            std::string path = name;
+            auto lastPair = folderIndicies[parentIndex];
+            while (lastPair.first != -1) {
+                path.insert(0,lastPair.second+"/");
+                lastPair = folderIndicies[lastPair.first];
+            }
+            printf("%s",path.c_str());
+        }
     }
 }

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(ReMania)
+project(ReMania CXX)
 
 option(TESTS "Turn tests on" ON)
 
@@ -39,7 +39,7 @@ if (TESTS MATCHES ON)
 endif()
 
 set(PREFIX src/main_app)
-add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp)
+add_executable(ReMania ${PREFIX}/assetLayer.cpp ${PREFIX}/engine.cpp ${PREFIX}/glLayer.cpp ${PREFIX}/main.cpp ${PREFIX}/utils.cpp tracy/TracyClient.cpp src/main_app/physics.cpp src/main_app/physics.h)
 target_link_libraries(ReMania glfw mbedtls ${OPENGL_LIBRARIES})
 
 if (NOT GLEW_FOUND)
@@ -48,7 +48,7 @@ else()
         target_link_libraries(ReMania ${GLEW_LIBRARIES})
 endif()
 
-target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include lib/endian/include())
+target_include_directories(ReMania PUBLIC lib/glew/include lib/glfw3/include lib/glm tracy lib/lzo/include lib/mbedtls/include lib/fsx)
 if (TRACY MATCHES ON)
     target_compile_definitions(ReMania PUBLIC TRACY_ENABLE)
 endif()

@@ -26,12 +26,12 @@ jobs:
           }
           - {
             name: "Ubuntu-GCC-x86", artifact: "Linux-GCC-x86.tar.xz",
-            os: ubuntu-latest,
+            os: ubuntu-20.04,
             build_type: "Release", cc: "gcc", cxx: "g++"
           }
           - {
             name: "Ubuntu-Clang-x86", artifact: "Linux-Clang-x86.tar.xz",
-            os: ubuntu-latest,
+            os: ubuntu-20.04,
             build_type: "Release", cc: "clang", cxx: "clang++"
           }
           - {
@@ -47,12 +47,12 @@ jobs:
           }
           - {
             name: "Ubuntu-GCC-Debug", artifact: "Linux-GCC-Debug.tar.xz",
-            os: ubuntu-latest,
+            os: ubuntu-20.04,
             build_type: "Debug", cc: "gcc", cxx: "g++"
           }
           - {
             name: "Ubuntu-Clang-Debug", artifact: "Linux-Clang-Debug.tar.xz",
-            os: ubuntu-latest,
+            os: ubuntu-20.04,
             build_type: "Debug", cc: "clang", cxx: "clang++"
           }
           - {
@@ -74,7 +74,7 @@ jobs:
         run: cmake -E make_directory ${{runner.workspace}}/build
           
       - name: Setup OpenGL
-        if: matrix.config.os == 'ubuntu-latest'
+        if: matrix.config.os == 'ubuntu-20.04'
         run: sudo apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev libxrandr-dev xorg-dev
 
       - name: Configure CMake
