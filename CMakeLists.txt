@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(ReMania)
+project(ReMania CXX)
 
 option(TESTS "Turn tests on" ON)
 
